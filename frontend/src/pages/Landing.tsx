@@ -1,0 +1,287 @@
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { 
+  Upload, 
+  FileText, 
+  BarChart3, 
+  Shield, 
+  Users, 
+  TrendingUp,
+  Heart,
+  Activity,
+  Star,
+  ArrowRight
+} from "lucide-react";
+import medicalHeroBg from "@/assets/medical-hero-bg.jpg";
+
+const Landing = () => {
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section 
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        style={{
+          backgroundImage: `url(${medicalHeroBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+        
+        <div className="relative z-10 container mx-auto px-4 text-center">
+          <div className="max-w-4xl mx-auto space-y-8">
+            {/* Floating Medical Icon */}
+            <div className="flex justify-center">
+              <div className="relative">
+                <Activity className="h-16 w-16 text-primary animate-float" />
+                <div className="absolute inset-0 h-16 w-16 text-primary-glow animate-pulse-slow opacity-50" />
+              </div>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow leading-tight">
+              AI-Powered Health Risk Prediction
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Analyze chronic disease risks with patient-friendly insights. 
+              Get accurate predictions and personalized recommendations in minutes.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                asChild
+                size="lg"
+                className="medical-gradient text-white hover:shadow-glow transition-all duration-300 text-lg px-8 py-6"
+              >
+                <Link to="/disease-selection" className="flex items-center gap-2">
+                  Analyze Probability & Deterioration
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="text-lg px-8 py-6 hover:bg-primary/5 border-primary/20"
+              >
+                Watch Demo
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works Section */}
+      <section id="how-it-works" className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">How it Works</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Simple 3-step process to get comprehensive health risk analysis
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              {
+                icon: Upload,
+                step: "01",
+                title: "Upload Report",
+                description: "Upload your medical reports, lab results, or input key health parameters"
+              },
+              {
+                icon: FileText,
+                step: "02", 
+                title: "Fill Parameters",
+                description: "Complete any missing health information for accurate analysis"
+              },
+              {
+                icon: BarChart3,
+                step: "03",
+                title: "Get Predictions",
+                description: "Receive detailed risk analysis with actionable recommendations"
+              }
+            ].map((item, index) => (
+              <Card key={index} className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted">
+                <CardContent className="p-8 text-center">
+                  <div className="relative mb-6">
+                    <div className="absolute -top-4 -right-4 text-6xl font-bold text-primary/10">
+                      {item.step}
+                    </div>
+                    <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
+                      <item.icon className="h-8 w-8 text-primary" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">Platform Features</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Comprehensive health analysis tools designed for patients and clinicians
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            {[
+              {
+                icon: Heart,
+                title: "Multi-disease Prediction",
+                description: "Advanced models for diabetes, hypertension, heart failure, and more"
+              },
+              {
+                icon: BarChart3,
+                title: "Risk Scoring & Probabilities",
+                description: "Clear probability scores with confidence intervals"
+              },
+              {
+                icon: Users,
+                title: "Clinician-friendly Insights", 
+                description: "Professional reports formatted for healthcare providers"
+              },
+              {
+                icon: FileText,
+                title: "Patient Recommendations",
+                description: "Personalized lifestyle and treatment suggestions"
+              },
+              {
+                icon: TrendingUp,
+                title: "Dashboard with Charts",
+                description: "Interactive visualizations of health trends and risks"
+              },
+              {
+                icon: Shield,
+                title: "Secure & Private",
+                description: "HIPAA-compliant data handling and encryption"
+              }
+            ].map((feature, index) => (
+              <Card key={index} className="shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted group">
+                <CardContent className="p-6">
+                  <div className="bg-primary/10 rounded-lg w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="feedback" className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">What Our Users Say</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Trusted by healthcare professionals and patients worldwide
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                name: "Dr. Sarah Johnson",
+                role: "Cardiologist",
+                content: "MedPredict has transformed how I assess patient risk. The accuracy and clarity of reports save significant time in consultations.",
+                rating: 5
+              },
+              {
+                name: "Michael Chen",
+                role: "Patient",
+                content: "Finally, a tool that explains my health risks in terms I can understand. The recommendations are practical and easy to follow.",
+                rating: 5
+              },
+              {
+                name: "Dr. Emily Rodriguez",
+                role: "Endocrinologist", 
+                content: "The diabetes prediction models are incredibly accurate. It's become an essential part of my practice workflow.",
+                rating: 5
+              }
+            ].map((testimonial, index) => (
+              <Card key={index} className="shadow-soft border-0 frosted">
+                <CardContent className="p-6">
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground mb-6 leading-relaxed italic">
+                    "{testimonial.content}"
+                  </p>
+                  <div>
+                    <p className="font-semibold text-foreground">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-foreground mb-4">Get in Touch</h2>
+              <p className="text-xl text-muted-foreground">
+                Have questions? We'd love to hear from you.
+              </p>
+            </div>
+
+            <Card className="shadow-soft border-0 frosted">
+              <CardContent className="p-8">
+                <form className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Name
+                      </label>
+                      <Input placeholder="Your name" className="bg-background/50" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Email
+                      </label>
+                      <Input type="email" placeholder="your.email@example.com" className="bg-background/50" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Message
+                    </label>
+                    <Textarea 
+                      placeholder="Tell us how we can help..."
+                      className="min-h-[120px] bg-background/50"
+                    />
+                  </div>
+                  <Button className="medical-gradient text-white hover:shadow-glow transition-all duration-300 w-full">
+                    Send Message
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Landing;

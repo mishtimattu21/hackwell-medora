@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Medical Sky Blue Theme */
+    --primary: 213 94% 68%;
+    --primary-foreground: 0 0% 100%;
+    --primary-muted: 213 94% 68% / 0.1;
+    --primary-glow: 213 94% 78%;
+
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 213 94% 68% / 0.1;
+    --accent-foreground: 213 94% 68%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 213 94% 68%;
+
+    /* Medical Design System */
+    --medical-blue: 213 94% 68%;
+    --medical-blue-dark: 213 84% 58%;
+    --medical-gradient: linear-gradient(135deg, hsl(213 94% 68%) 0%, hsl(213 84% 58%) 100%);
+    --frosted-bg: 0 0% 100% / 0.8;
+    --frosted-border: 0 0% 100% / 0.2;
+    --shadow-soft: 0 4px 32px hsl(213 94% 68% / 0.12);
+    --shadow-glow: 0 0 40px hsl(213 94% 68% / 0.15);
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Medical Midnight Blue Theme */
+    --primary: 220 91% 15%;
+    --primary-foreground: 210 40% 98%;
+    --primary-muted: 220 91% 15% / 0.1;
+    --primary-glow: 220 91% 25%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 220 91% 15% / 0.1;
+    --accent-foreground: 220 91% 15%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 220 91% 15%;
+
+    /* Medical Design System - Dark */
+    --medical-blue: 220 91% 15%;
+    --medical-blue-dark: 220 81% 10%;
+    --medical-gradient: linear-gradient(135deg, hsl(220 91% 15%) 0%, hsl(220 81% 10%) 100%);
+    --frosted-bg: 222.2 84% 4.9% / 0.8;
+    --frosted-border: 210 40% 98% / 0.1;
+    --shadow-soft: 0 4px 32px hsl(220 91% 15% / 0.25);
+    --shadow-glow: 0 0 40px hsl(220 91% 15% / 0.2);
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .frosted {
+    background: hsl(var(--frosted-bg));
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--frosted-border));
+  }
+
+  .medical-gradient {
+    background: var(--medical-gradient);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
