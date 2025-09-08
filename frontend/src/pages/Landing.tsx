@@ -71,8 +71,8 @@ const Landing = () => {
             </div>
 
             {/* Right: Hero image from public */}
-            <div className="relative slide-in">
-              <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto">
+            <div className="relative slide-in flex justify-end pr-9 md:pr-8 lg:pr-12">
+              <div className="relative w-full max-w-xl lg:max-w-2xl ml-auto">
                 <div className="aspect-[4/3] flex items-center justify-center">
                   <img src="/hero-1.png" alt="Medical hero" className="w-full h-full object-contain" />
                 </div>
@@ -86,7 +86,7 @@ const Landing = () => {
       <section id="how-it-works" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">How it Works</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">How it <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">Works</span></h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Simple 3-step process to get comprehensive health risk analysis
             </p>
@@ -111,15 +111,15 @@ const Landing = () => {
               }
             ].map((item, index) => (
               <Reveal key={index} delayMs={index * 120}>
-                <Card className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted">
-                  <CardContent className="p-8 text-center">
+                <Card className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted h-full">
+                  <CardContent className="p-8 text-center h-full flex flex-col">
                     <div className="relative mb-6">
                       <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                         <item.icon className="h-8 w-8 text-primary" />
                       </div>
                     </div>
                     <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                    <p className="text-muted-foreground leading-relaxed flex-1">{item.description}</p>
                   </CardContent>
                 </Card>
               </Reveal>
@@ -132,7 +132,7 @@ const Landing = () => {
       <section id="features" className="py-20 bg-muted/60 dark:bg-muted/40">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Platform Features</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">Platform <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">Features</span></h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Comprehensive health analysis tools designed for patients and clinicians
             </p>
@@ -172,13 +172,13 @@ const Landing = () => {
               }
             ].map((feature, index) => (
               <Reveal key={index} delayMs={index * 100}>
-                <Card className="shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted group">
-                  <CardContent className="p-6">
+                <Card className="shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted group h-full">
+                  <CardContent className="p-6 h-full flex flex-col">
                   <div className="bg-primary/10 rounded-lg w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed flex-1">{feature.description}</p>
                   </CardContent>
                 </Card>
               </Reveal>
@@ -191,7 +191,7 @@ const Landing = () => {
       <section id="feedback" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">What Our Users Say</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">What Our Users <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">Say</span></h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Trusted by healthcare professionals and patients worldwide
             </p>
@@ -219,14 +219,14 @@ const Landing = () => {
               }
             ].map((testimonial, index) => (
               <Reveal key={index} delayMs={index * 120}>
-                <Card className="shadow-soft border-0 frosted">
-                  <CardContent className="p-6">
+                <Card className="shadow-soft border-0 frosted h-full">
+                  <CardContent className="p-6 h-full flex flex-col">
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-muted-foreground mb-6 leading-relaxed italic">
+                  <p className="text-muted-foreground mb-6 leading-relaxed italic flex-1">
                     "{testimonial.content}"
                   </p>
                   <div>
@@ -246,7 +246,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-foreground mb-4">Get in Touch</h2>
+              <h2 className="text-4xl font-bold text-foreground mb-4">Get in <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">Touch</span></h2>
               <p className="text-xl text-muted-foreground">
                 Have questions? We'd love to hear from you.
               </p>

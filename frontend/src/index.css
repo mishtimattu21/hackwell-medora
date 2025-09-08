@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Light Background (very light lilac/neutral) */
-    --background: 228 26% 98%;
+    --background: 228 26% 98%;;
     /* Text on Light */
     --foreground: 222.2 47.4% 11.2%;
 
