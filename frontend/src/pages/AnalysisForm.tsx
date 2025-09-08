@@ -74,12 +74,38 @@ const AnalysisForm = () => {
     "heart-failure": {
       title: "Heart Failure Analysis",
       fields: [
+        { name: "t0_window_days", label: "Time Window (days)", type: "number", placeholder: "90" },
         { name: "age", label: "Age", type: "number", placeholder: "65" },
-        { name: "ejectionFraction", label: "Ejection Fraction (%)", type: "number", placeholder: "45" },
-        { name: "bnp", label: "BNP (pg/mL)", type: "number", placeholder: "200" },
-        { name: "creatinine", label: "Serum Creatinine (mg/dL)", type: "number", placeholder: "1.2", step: "0.1" },
-        { name: "systolicBP", label: "Systolic BP (mmHg)", type: "number", placeholder: "120" },
-        { name: "nyhaClass", label: "NYHA Class", type: "select", options: ["I", "II", "III", "IV"] },
+        { name: "sex_male", label: "Sex (1=Male, 0=Female)", type: "number", placeholder: "1" },
+        { name: "bmi", label: "BMI (kg/m²)", type: "number", placeholder: "27.5", step: "0.1" },
+        { name: "sbp_last", label: "Last Systolic BP (mmHg)", type: "number", placeholder: "120" },
+        { name: "dbp_last", label: "Last Diastolic BP (mmHg)", type: "number", placeholder: "80" },
+        { name: "history_diabetes", label: "History of Diabetes (0/1)", type: "number", placeholder: "0" },
+        { name: "history_hypertension", label: "History of Hypertension (0/1)", type: "number", placeholder: "1" },
+        { name: "creatinine_last", label: "Creatinine Last (mg/dL)", type: "number", placeholder: "1.2", step: "0.1" },
+        { name: "creatinine_mean", label: "Creatinine Mean (mg/dL)", type: "number", placeholder: "1.1", step: "0.1" },
+        { name: "creatinine_slope_per_day", label: "Creatinine Slope per Day", type: "number", placeholder: "0.0", step: "0.001" },
+        { name: "hbA1c_last", label: "HbA1c Last (%)", type: "number", placeholder: "6.5", step: "0.1" },
+        { name: "fpg_last", label: "Fasting Plasma Glucose (mg/dL)", type: "number", placeholder: "110" },
+        { name: "hdl_last", label: "HDL (mg/dL)", type: "number", placeholder: "45" },
+        { name: "ldl_last", label: "LDL (mg/dL)", type: "number", placeholder: "120" },
+        { name: "triglycerides_last", label: "Triglycerides (mg/dL)", type: "number", placeholder: "150" },
+        { name: "qrs_duration_ms", label: "QRS Duration (ms)", type: "number", placeholder: "100" },
+        { name: "arrhythmia_flag", label: "Arrhythmia Present (0/1)", type: "number", placeholder: "0" },
+        { name: "afib_flag", label: "Atrial Fibrillation (0/1)", type: "number", placeholder: "0" },
+        { name: "prev_mi", label: "Previous MI (0/1)", type: "number", placeholder: "0" },
+        { name: "cabg_history", label: "CABG History (0/1)", type: "number", placeholder: "0" },
+        { name: "echo_ef_last", label: "Echo EF Last (%)", type: "number", placeholder: "45", step: "0.1" },
+        { name: "has_echo", label: "Echo Available (0/1)", type: "number", placeholder: "1" },
+        { name: "on_ACEi", label: "On ACE Inhibitor (0/1)", type: "number", placeholder: "1" },
+        { name: "on_beta_blocker", label: "On Beta-blocker (0/1)", type: "number", placeholder: "1" },
+        { name: "on_diuretic", label: "On Diuretic (0/1)", type: "number", placeholder: "1" },
+        { name: "hf_events_past_year", label: "HF Admissions Past Year", type: "number", placeholder: "0" },
+        { name: "admissions_30d", label: "Admissions Last 30 Days", type: "number", placeholder: "0" },
+        { name: "physical_activity_level", label: "Physical Activity Level", type: "select", options: ["Low", "Medium", "High"] },
+        { name: "physical_activity_numeric", label: "Physical Activity (0/1/2)", type: "number", placeholder: "1" },
+        { name: "cci", label: "Charlson Comorbidity Index", type: "number", placeholder: "3" },
+        { name: "pred_prob_90d", label: "Predicted Prob (90d)", type: "number", placeholder: "0.25", step: "0.01" }
       ]
     },
     "weight-glp1": {
@@ -111,12 +137,51 @@ const AnalysisForm = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsLoading(false);
-    navigate(`/results/${diseaseType}`);
+    try {
+      const formEl = event.currentTarget as HTMLFormElement;
+      const formData = new FormData(formEl);
+      const config = diseaseConfig[diseaseType as keyof typeof diseaseConfig] || diseaseConfig.general;
+
+      // Collect values from the form based on configured fields
+      const values: Record<string, any> = {};
+      config.fields.forEach((field: any) => {
+        const raw = formData.get(field.name);
+        if (raw === null || raw === "") return;
+        if (field.type === "number") {
+          const num = Number(raw);
+          values[field.name] = Number.isNaN(num) ? raw : num;
+        } else {
+          values[field.name] = raw;
+        }
+      });
+
+      // Attach file and disease_type
+      const payload = new FormData();
+      payload.append("disease_type", diseaseType || "general");
+      payload.append("data", JSON.stringify(values));
+      if (uploadedFile) {
+        payload.append("file", uploadedFile);
+      }
+
+      const RAW_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8000";
+      const API_BASE = String(RAW_BASE).replace(/\/*$/, ""); // trim trailing slashes
+      const res = await fetch(`${API_BASE}/analyze`, { method: "POST", body: payload });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to analyze");
+      }
+      const result = await res.json();
+      try {
+        sessionStorage.setItem("analysis_result", JSON.stringify(result));
+      } catch {}
+      toast({ title: "Analysis complete", description: `Probability ${(result?.probability * 100).toFixed(1)}%` });
+
+      navigate(`/results/${diseaseType}`);
+    } catch (err: any) {
+      toast({ title: "Submission failed", description: String(err?.message || err), variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

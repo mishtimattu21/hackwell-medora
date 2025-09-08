@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import {
   Heart, 
   Activity,
   Download,
-  Share,
   Calendar,
   Target,
   Lightbulb,
@@ -18,45 +18,43 @@ import {
 const ResultsDashboard = () => {
   const { diseaseType } = useParams();
 
-  // Mock data - in real app this would come from API
-  const results = {
-    riskScore: 67,
-    deteriorationRisk: 23,
-    timeframe: "90 days",
-    confidence: 89,
-    primaryFactors: [
-      { factor: "HbA1c Level", impact: 85, description: "Above target range" },
-      { factor: "BMI", impact: 72, description: "Overweight category" },
-      { factor: "Age", impact: 45, description: "Moderate risk factor" },
-      { factor: "Blood Pressure", impact: 38, description: "Slightly elevated" }
-    ],
-    recommendations: [
-      {
-        category: "Immediate Action",
-        items: [
-          "Schedule follow-up with endocrinologist within 2 weeks",
-          "Begin continuous glucose monitoring",
-          "Review current medication dosages"
-        ]
-      },
-      {
-        category: "Lifestyle Changes", 
-        items: [
-          "Reduce carbohydrate intake by 20-30%",
-          "Increase physical activity to 150 minutes/week",
-          "Implement stress management techniques"
-        ]
-      },
-      {
-        category: "Monitoring",
-        items: [
-          "Check blood glucose 4x daily",
-          "Weekly weight measurements",
-          "Monthly HbA1c testing"
-        ]
-      }
-    ]
-  };
+  const [apiResult, setApiResult] = useState<any>(null);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("analysis_result");
+      if (raw) setApiResult(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  const probability = useMemo(() => {
+    return typeof apiResult?.probability === "number" ? Math.max(0, Math.min(1, apiResult.probability)) : 0;
+  }, [apiResult]);
+
+  const deterioration = useMemo(() => {
+    if (apiResult?.risk?.deterioration) return apiResult.risk.deterioration;
+    return probability >= 0.5 ? "yes" : "no";
+  }, [apiResult, probability]);
+
+  const results = useMemo(() => {
+    const pf = Array.isArray(apiResult?.primary_factors) ? apiResult.primary_factors : [];
+    const recs = apiResult?.recommendations || {};
+    return {
+      riskScore: Math.round(probability * 100),
+      deteriorationRisk: Math.round(probability * 100),
+      timeframe: "90 days",
+      confidence: 90,
+      primaryFactors: pf.map((x: any) => ({
+        factor: x.factor || "",
+        impact: Math.max(0, Math.min(100, Number(x.impact) || 0)),
+        description: x.description || "",
+      })),
+      recommendations: [
+        { category: "Immediate Action", items: recs["Immediate Action"] || [] },
+        { category: "Lifestyle Changes", items: recs["Lifestyle Changes"] || [] },
+        { category: "Monitoring", items: recs["Monitoring"] || [] },
+      ],
+    };
+  }, [apiResult, probability]);
 
   const getRiskLevel = (score: number) => {
     if (score >= 70) return { level: "High", color: "text-red-500", bg: "bg-red-500/10" };
@@ -79,15 +77,40 @@ const ResultsDashboard = () => {
             <p className="text-muted-foreground">
               Generated on {new Date().toLocaleDateString()} • Disease Type: {diseaseType}
             </p>
+            {apiResult?.summary && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {apiResult.summary}
+              </p>
+            )}
           </div>
           <div className="flex gap-3 mt-4 lg:mt-0">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Share className="h-4 w-4" />
-              Share
-            </Button>
-            <Button className="medical-gradient text-white flex items-center gap-2">
+            <Button 
+              className="medical-gradient text-white flex items-center gap-2"
+              onClick={async () => {
+                const RAW_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8000";
+                const API_BASE = String(RAW_BASE).replace(/\/*$/, "");
+                const form = new FormData();
+                form.append('disease_type', String(diseaseType || 'general'));
+                form.append('payload', JSON.stringify(apiResult || {}));
+                const res = await fetch(`${API_BASE}/report`, { method: "POST", body: form });
+                if (!res.ok) {
+                  const t = await res.text().catch(() => 'Failed to generate PDF');
+                  alert(t);
+                  return;
+                }
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `analysis_report_${diseaseType || 'general'}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+              }}
+            >
               <Download className="h-4 w-4" />
-              Download Report
+              Download Report (PDF)
             </Button>
           </div>
         </div>
@@ -124,7 +147,7 @@ const ResultsDashboard = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <TrendingUp className="h-5 w-5 text-primary" />
-                    Deterioration Risk
+                    Deterioration Risk ({deterioration === 'yes' ? 'Yes' : 'No'})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

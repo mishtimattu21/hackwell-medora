@@ -5,6 +5,7 @@ import Reveal from "@/components/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/lib/supabaseClient";
 import { 
   Upload, 
   FileText, 
@@ -254,19 +255,39 @@ const Landing = () => {
 
             <Card className="shadow-soft border-0 frosted">
               <CardContent className="p-8">
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget as HTMLFormElement;
+                  const formData = new FormData(form);
+                  const name = String(formData.get('name') || '').trim();
+                  const email = String(formData.get('email') || '').trim();
+                  const message = String(formData.get('message') || '').trim();
+                  if (!name || !email || !message) {
+                    alert('Please fill in name, email and message.');
+                    return;
+                  }
+                  const { error } = await supabase
+                    .from('contacts')
+                    .insert([{ name, email, message, source: 'landing' }]);
+                  if (error) {
+                    alert('Failed to send. Please try again.');
+                    return;
+                  }
+                  alert('Message sent! We will get back to you soon.');
+                  form.reset();
+                }}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
                         Name
                       </label>
-                      <Input placeholder="Your name" className="bg-background/50" />
+                      <Input name="name" placeholder="Your name" className="bg-background/50" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
                         Email
                       </label>
-                      <Input type="email" placeholder="your.email@example.com" className="bg-background/50" />
+                      <Input name="email" type="email" placeholder="your.email@example.com" className="bg-background/50" />
                     </div>
                   </div>
                   <div>
@@ -274,11 +295,12 @@ const Landing = () => {
                       Message
                     </label>
                     <Textarea 
+                      name="message"
                       placeholder="Tell us how we can help..."
                       className="min-h-[120px] bg-background/50"
                     />
                   </div>
-                  <Button className="medical-gradient text-white hover:shadow-glow transition-all duration-300 w-full">
+                  <Button type="submit" className="medical-gradient text-white hover:shadow-glow transition-all duration-300 w-full">
                     Send Message
                   </Button>
                 </form>
