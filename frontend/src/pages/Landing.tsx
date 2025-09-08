@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import Reveal from "@/components/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,13 +23,20 @@ const Landing = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section 
-        className="relative min-h-screen flex items-center overflow-hidden bg-background"
+        className="relative min-h-screen flex items-center overflow-hidden bg-background fade-in"
+        style={{
+          backgroundImage: "url(/bg-2.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
+        }}
       >
+        <div className="absolute inset-0 bg-background/70" />
         
         <div className="relative z-10 container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: Copy */}
-            <div className="space-y-8 text-left">
+            <div className="space-y-8 text-left slide-up">
               
 
               <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow leading-tight">
@@ -63,13 +71,10 @@ const Landing = () => {
             </div>
 
             {/* Right: Hero image from public */}
-            <div className="relative">
-              <div className="relative w-full max-w-md mx-auto rounded-2xl border border-border/60 bg-background/60 shadow-soft overflow-hidden">
+            <div className="relative slide-in">
+              <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto">
                 <div className="aspect-[4/3] flex items-center justify-center">
                   <img src="/hero-1.png" alt="Medical hero" className="w-full h-full object-contain" />
-                </div>
-                <div className="border-t border-border/60 px-4 py-3 text-center text-sm text-muted-foreground">
-                  Illustration
                 </div>
               </div>
             </div>
@@ -105,24 +110,26 @@ const Landing = () => {
                 description: "Receive detailed risk analysis with actionable recommendations"
               }
             ].map((item, index) => (
-              <Card key={index} className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted">
-                <CardContent className="p-8 text-center">
-                  <div className="relative mb-6">
-                    <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
-                      <item.icon className="h-8 w-8 text-primary" />
+              <Reveal key={index} delayMs={index * 120}>
+                <Card className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted">
+                  <CardContent className="p-8 text-center">
+                    <div className="relative mb-6">
+                      <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
+                        <item.icon className="h-8 w-8 text-primary" />
+                      </div>
                     </div>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-                </CardContent>
-              </Card>
+                    <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                  </CardContent>
+                </Card>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20">
+      <section id="features" className="py-20 bg-muted/60 dark:bg-muted/40">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">Platform Features</h2>
@@ -164,15 +171,17 @@ const Landing = () => {
                 description: "HIPAA-compliant data handling and encryption"
               }
             ].map((feature, index) => (
-              <Card key={index} className="shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted group">
-                <CardContent className="p-6">
+              <Reveal key={index} delayMs={index * 100}>
+                <Card className="shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted group">
+                  <CardContent className="p-6">
                   <div className="bg-primary/10 rounded-lg w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -209,8 +218,9 @@ const Landing = () => {
                 rating: 5
               }
             ].map((testimonial, index) => (
-              <Card key={index} className="shadow-soft border-0 frosted">
-                <CardContent className="p-6">
+              <Reveal key={index} delayMs={index * 120}>
+                <Card className="shadow-soft border-0 frosted">
+                  <CardContent className="p-6">
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
@@ -223,8 +233,9 @@ const Landing = () => {
                     <p className="font-semibold text-foreground">{testimonial.name}</p>
                     <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                   </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -233,7 +244,7 @@ const Landing = () => {
       {/* Contact Section */}
       <section id="contact" className="py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-foreground mb-4">Get in Touch</h2>
               <p className="text-xl text-muted-foreground">

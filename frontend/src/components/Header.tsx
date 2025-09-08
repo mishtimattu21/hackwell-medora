@@ -17,13 +17,15 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 frosted shadow-soft">
+    <header className="fixed top-0 left-0 right-0 z-50 frosted shadow-soft border-b border-border/60">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
             <Activity className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">MedPredict</span>
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">
+              MedPredict
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -32,7 +34,9 @@ const Header = () => {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium"
+                className={`relative font-medium text-muted-foreground hover:text-primary transition-colors duration-200
+                  after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-full after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100
+                ${location.pathname === "/" && link.href === "/" ? "text-primary after:scale-x-100" : ""}`}
               >
                 {link.name}
               </a>

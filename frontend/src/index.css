@@ -8,20 +8,22 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Light Background (very light lilac/neutral) */
+    --background: 228 26% 98%;
+    /* Text on Light */
+    --foreground: 222.2 47.4% 11.2%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 47.4% 11.2%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222.2 47.4% 11.2%;
 
-    /* Refined Royal Blue Theme (Light) */
-    --primary: 222 89% 60%;
+    /* Primary (Light): Dark Lavender – slightly lighter */
+    --primary: 265 55% 48%;
     --primary-foreground: 0 0% 100%;
-    --primary-muted: 222 89% 60% / 0.12;
-    --primary-glow: 222 89% 70%;
+    --primary-muted: 265 55% 48% / 0.12;
+    --primary-glow: 265 55% 58%;
 
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -29,24 +31,25 @@ All colors MUST be HSL.
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 222 89% 60% / 0.1;
-    --accent-foreground: 222 89% 60%;
+    /* Accent: Light Lilac */
+    --accent: 260 100% 94% / 1;
+    --accent-foreground: 255 90% 72%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222 89% 60%;
+    --ring: 265 55% 48%;
 
-    /* Medical Design System */
-    --medical-blue: 222 89% 60%;
-    --medical-blue-dark: 222 79% 52%;
-    --medical-gradient: linear-gradient(135deg, hsl(222 89% 60%) 0%, hsl(222 79% 52%) 100%);
-    --frosted-bg: 0 0% 100% / 0.8;
-    --frosted-border: 0 0% 100% / 0.2;
-    --shadow-soft: 0 4px 32px hsl(222 89% 60% / 0.12);
-    --shadow-glow: 0 0 40px hsl(222 89% 60% / 0.15);
+    /* Medical Design System mapped to dark lavender */
+    --medical-blue: 265 55% 48%;
+    --medical-blue-dark: 265 55% 40%;
+    --medical-gradient: linear-gradient(135deg, hsl(265 55% 48%) 0%, hsl(265 55% 40%) 100%);
+    --frosted-bg: 0 0% 100% / 0.6;
+    --frosted-border: 0 0% 100% / 0.25;
+    --shadow-soft: 0 4px 32px hsl(265 55% 48% / 0.10);
+    --shadow-glow: 0 0 40px hsl(265 55% 48% / 0.12);
 
     --radius: 1rem;
 
@@ -68,20 +71,22 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark Background (rich neutral) */
+    --background: 230 23% 12%;
+    /* Text on Dark */
+    --foreground: 0 0% 96%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 230 23% 12%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 230 23% 12%;
+    --popover-foreground: 0 0% 96%;
 
-    /* Refined Royal Blue Theme (Dark) */
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --primary-muted: 217 91% 60% / 0.12;
-    --primary-glow: 217 91% 70%;
+    /* Primary (Dark): Lighter Purple for contrast */
+    --primary: 265 85% 70%;
+    --primary-foreground: 0 0% 96%;
+    --primary-muted: 265 85% 70% / 0.12;
+    --primary-glow: 265 85% 80%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -89,24 +94,25 @@ All colors MUST be HSL.
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217 91% 60% / 0.1;
-    --accent-foreground: 217 91% 60%;
+    /* Accent: Light Lilac */
+    --accent: 260 100% 88% / 0.16;
+    --accent-foreground: 255 90% 76%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 217 91% 60%;
+    --ring: 265 85% 70%;
 
     /* Medical Design System - Dark */
-    --medical-blue: 217 91% 60%;
-    --medical-blue-dark: 217 83% 52%;
-    --medical-gradient: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 83% 52%) 100%);
-    --frosted-bg: 222.2 84% 4.9% / 0.8;
-    --frosted-border: 210 40% 98% / 0.1;
-    --shadow-soft: 0 4px 32px hsl(217 91% 60% / 0.18);
-    --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.2);
+    --medical-blue: 265 85% 70%;
+    --medical-blue-dark: 265 85% 62%;
+    --medical-gradient: linear-gradient(135deg, hsl(265 85% 70%) 0%, hsl(265 85% 62%) 100%);
+    --frosted-bg: 230 23% 12% / 0.5;
+    --frosted-border: 210 40% 98% / 0.14;
+    --shadow-soft: 0 6px 24px hsl(0 0% 0% / 0.35);
+    --shadow-glow: 0 0 0 hsl(0 0% 0% / 0);
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -130,10 +136,34 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* Elegant site-wide background: soft radial gradient accents */
+  .page-bg {
+    background:
+      radial-gradient(1200px 600px at 50% -10%, hsl(var(--primary)/0.06), transparent 60%),
+      radial-gradient(800px 400px at 120% 10%, hsl(var(--primary)/0.04), transparent 60%),
+      radial-gradient(800px 400px at -20% 20%, hsl(var(--primary)/0.04), transparent 60%);
+  }
+
+  /* In dark mode, remove radial light accents */
+  .dark .page-bg {
+    background: none;
+  }
+
+  /* Motion-safe micro-animations */
+  @media (prefers-reduced-motion: no-preference) {
+    .fade-in { animation: fade-in 600ms ease-out both; }
+    .slide-up { animation: slide-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .slide-in { animation: slide-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  }
+
+  @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes slide-up { from { transform: translateY(20px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes slide-in { from { transform: translateX(20px); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
   .frosted {
     background: hsl(var(--frosted-bg));
-    backdrop-filter: blur(12px);
+    backdrop-filter: saturate(160%) blur(22px);
     border: 1px solid hsl(var(--frosted-border));
+    box-shadow: 0 2px 24px hsl(var(--primary) / 0.08);
   }
 
   .medical-gradient {
@@ -159,5 +189,24 @@ All colors MUST be HSL.
 
   .animate-pulse-slow {
     animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Subtle purple spotlights */
+  .spotlight {
+    position: absolute;
+    pointer-events: none;
+    filter: blur(24px);
+    opacity: 0.28;
+    background: radial-gradient(closest-side, hsl(var(--primary-glow) / 0.6), transparent 70%);
+    mix-blend-mode: normal;
+  }
+  .spotlight-sm { width: 220px; height: 220px; }
+  .spotlight-md { width: 360px; height: 360px; }
+  .spotlight-lg { width: 520px; height: 520px; }
+
+  .dark .spotlight {
+    opacity: 0.22;
+    filter: blur(32px);
+    background: radial-gradient(closest-side, hsl(var(--primary) / 0.45), transparent 70%);
   }
 }

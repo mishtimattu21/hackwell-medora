@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import Reveal from "@/components/Reveal";
 import { 
   Activity, 
   Droplets, 
@@ -54,10 +55,10 @@ const DiseaseSelection = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
+    <div className="min-h-screen pt-24 pb-20 fade-in">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 slide-up">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Select Your Health Focus
           </h1>
@@ -69,8 +70,9 @@ const DiseaseSelection = () => {
 
         {/* Disease Cards Grid - 3 per row on md+ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          {diseases.map((disease) => (
+          {diseases.map((disease, index) => (
             <Link key={disease.id} to={`/analysis/${disease.id}`}>
+              <Reveal delayMs={index * 80}>
               <Card className={`
                 shadow-soft hover:shadow-glow transition-all duration-300 
                 border-0 frosted group cursor-pointer h-full
@@ -101,6 +103,7 @@ const DiseaseSelection = () => {
                   </div>
                 </CardContent>
               </Card>
+              </Reveal>
             </Link>
           ))}
         </div>
