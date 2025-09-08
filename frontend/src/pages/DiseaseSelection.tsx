@@ -21,27 +21,11 @@ const DiseaseSelection = () => {
     },
     {
       id: "diabetes-type1",
-      title: "Type-1 Diabetes",
+      title: "Diabetes",
       description: "Insulin-dependent diabetes risk analysis and management insights",
       icon: Droplets,
       color: "bg-red-500/10 hover:bg-red-500/20",
       iconColor: "text-red-500"
-    },
-    {
-      id: "diabetes-type2",
-      title: "Type-2 Diabetes", 
-      description: "Adult-onset diabetes prediction and lifestyle recommendations",
-      icon: Droplets,
-      color: "bg-orange-500/10 hover:bg-orange-500/20",
-      iconColor: "text-orange-500"
-    },
-    {
-      id: "prediabetes",
-      title: "Prediabetes",
-      description: "Early diabetes risk detection and prevention strategies",
-      icon: TrendingDown,
-      color: "bg-yellow-500/10 hover:bg-yellow-500/20",
-      iconColor: "text-yellow-500"
     },
     {
       id: "hypertension",
@@ -83,8 +67,8 @@ const DiseaseSelection = () => {
           </p>
         </div>
 
-        {/* Disease Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        {/* Disease Cards Grid - 3 per row on md+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {diseases.map((disease) => (
             <Link key={disease.id} to={`/analysis/${disease.id}`}>
               <Card className={`

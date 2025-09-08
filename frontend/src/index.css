@@ -17,11 +17,11 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Medical Sky Blue Theme */
-    --primary: 213 94% 68%;
+    /* Refined Royal Blue Theme (Light) */
+    --primary: 222 89% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-muted: 213 94% 68% / 0.1;
-    --primary-glow: 213 94% 78%;
+    --primary-muted: 222 89% 60% / 0.12;
+    --primary-glow: 222 89% 70%;
 
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -29,24 +29,24 @@ All colors MUST be HSL.
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 213 94% 68% / 0.1;
-    --accent-foreground: 213 94% 68%;
+    --accent: 222 89% 60% / 0.1;
+    --accent-foreground: 222 89% 60%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 213 94% 68%;
+    --ring: 222 89% 60%;
 
     /* Medical Design System */
-    --medical-blue: 213 94% 68%;
-    --medical-blue-dark: 213 84% 58%;
-    --medical-gradient: linear-gradient(135deg, hsl(213 94% 68%) 0%, hsl(213 84% 58%) 100%);
+    --medical-blue: 222 89% 60%;
+    --medical-blue-dark: 222 79% 52%;
+    --medical-gradient: linear-gradient(135deg, hsl(222 89% 60%) 0%, hsl(222 79% 52%) 100%);
     --frosted-bg: 0 0% 100% / 0.8;
     --frosted-border: 0 0% 100% / 0.2;
-    --shadow-soft: 0 4px 32px hsl(213 94% 68% / 0.12);
-    --shadow-glow: 0 0 40px hsl(213 94% 68% / 0.15);
+    --shadow-soft: 0 4px 32px hsl(222 89% 60% / 0.12);
+    --shadow-glow: 0 0 40px hsl(222 89% 60% / 0.15);
 
     --radius: 1rem;
 
@@ -77,11 +77,11 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    /* Medical Midnight Blue Theme */
-    --primary: 220 91% 15%;
+    /* Refined Royal Blue Theme (Dark) */
+    --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
-    --primary-muted: 220 91% 15% / 0.1;
-    --primary-glow: 220 91% 25%;
+    --primary-muted: 217 91% 60% / 0.12;
+    --primary-glow: 217 91% 70%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -89,24 +89,24 @@ All colors MUST be HSL.
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 220 91% 15% / 0.1;
-    --accent-foreground: 220 91% 15%;
+    --accent: 217 91% 60% / 0.1;
+    --accent-foreground: 217 91% 60%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 220 91% 15%;
+    --ring: 217 91% 60%;
 
     /* Medical Design System - Dark */
-    --medical-blue: 220 91% 15%;
-    --medical-blue-dark: 220 81% 10%;
-    --medical-gradient: linear-gradient(135deg, hsl(220 91% 15%) 0%, hsl(220 81% 10%) 100%);
+    --medical-blue: 217 91% 60%;
+    --medical-blue-dark: 217 83% 52%;
+    --medical-gradient: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 83% 52%) 100%);
     --frosted-bg: 222.2 84% 4.9% / 0.8;
     --frosted-border: 210 40% 98% / 0.1;
-    --shadow-soft: 0 4px 32px hsl(220 91% 15% / 0.25);
-    --shadow-glow: 0 0 40px hsl(220 91% 15% / 0.2);
+    --shadow-soft: 0 4px 32px hsl(217 91% 60% / 0.18);
+    --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.2);
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;

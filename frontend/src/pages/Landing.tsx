@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,61 +16,62 @@ import {
   Star,
   ArrowRight
 } from "lucide-react";
-import medicalHeroBg from "@/assets/medical-hero-bg.jpg";
 
 const Landing = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section 
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: `url(${medicalHeroBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
+        className="relative min-h-screen flex items-center overflow-hidden bg-background"
       >
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
         
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Floating Medical Icon */}
-            <div className="flex justify-center">
-              <div className="relative">
-                <Activity className="h-16 w-16 text-primary animate-float" />
-                <div className="absolute inset-0 h-16 w-16 text-primary-glow animate-pulse-slow opacity-50" />
+        <div className="relative z-10 container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Copy */}
+            <div className="space-y-8 text-left">
+              
+
+              <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow leading-tight">
+                AI-Powered Health Risk Prediction
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl leading-relaxed">
+                Analyze chronic disease risks with patient-friendly insights. 
+                Get accurate predictions and personalized recommendations in minutes.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  asChild
+                  size="lg"
+                  className="medical-gradient text-white hover:shadow-glow transition-all duration-300 text-lg px-8 py-6"
+                >
+                  <Link to="/disease-selection" className="flex items-center gap-2">
+                    Analyze Probability & Deterioration
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="text-lg px-8 py-6 hover:bg-primary/5 border-primary/20"
+                >
+                  Watch Demo
+                </Button>
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow leading-tight">
-              AI-Powered Health Risk Prediction
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Analyze chronic disease risks with patient-friendly insights. 
-              Get accurate predictions and personalized recommendations in minutes.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                asChild
-                size="lg"
-                className="medical-gradient text-white hover:shadow-glow transition-all duration-300 text-lg px-8 py-6"
-              >
-                <Link to="/disease-selection" className="flex items-center gap-2">
-                  Analyze Probability & Deterioration
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="text-lg px-8 py-6 hover:bg-primary/5 border-primary/20"
-              >
-                Watch Demo
-              </Button>
+            {/* Right: Hero image from public */}
+            <div className="relative">
+              <div className="relative w-full max-w-md mx-auto rounded-2xl border border-border/60 bg-background/60 shadow-soft overflow-hidden">
+                <div className="aspect-[4/3] flex items-center justify-center">
+                  <img src="/hero-1.png" alt="Medical hero" className="w-full h-full object-contain" />
+                </div>
+                <div className="border-t border-border/60 px-4 py-3 text-center text-sm text-muted-foreground">
+                  Illustration
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -89,19 +91,16 @@ const Landing = () => {
             {[
               {
                 icon: Upload,
-                step: "01",
                 title: "Upload Report",
                 description: "Upload your medical reports, lab results, or input key health parameters"
               },
               {
                 icon: FileText,
-                step: "02", 
                 title: "Fill Parameters",
                 description: "Complete any missing health information for accurate analysis"
               },
               {
                 icon: BarChart3,
-                step: "03",
                 title: "Get Predictions",
                 description: "Receive detailed risk analysis with actionable recommendations"
               }
@@ -109,9 +108,6 @@ const Landing = () => {
               <Card key={index} className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted">
                 <CardContent className="p-8 text-center">
                   <div className="relative mb-6">
-                    <div className="absolute -top-4 -right-4 text-6xl font-bold text-primary/10">
-                      {item.step}
-                    </div>
                     <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                       <item.icon className="h-8 w-8 text-primary" />
                     </div>
