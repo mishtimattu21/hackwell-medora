@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Activity, Mail, Phone, MapPin, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Activity, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Github } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -53,15 +53,15 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-2 text-muted-foreground text-sm">
                 <Mail className="h-4 w-4" />
-                <span>info@medora.com</span>
+                <span>medora@vitstudent.ac.in</span>
               </div>
               <div className="flex items-center space-x-2 text-muted-foreground text-sm">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 9983577988</span>
               </div>
               <div className="flex items-center space-x-2 text-muted-foreground text-sm">
                 <MapPin className="h-4 w-4" />
-                <span>San Francisco, CA</span>
+                <span>C block, VIT Chennai</span>
               </div>
             </div>
           </div>
@@ -70,19 +70,14 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © 2024 Medora. All rights reserved.
+            © 2025 Medora. All rights reserved.
           </p>
           
           {/* Social Links */}
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors hover:scale-110 transform">
-              <Facebook className="h-5 w-5" />
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors hover:scale-110 transform">
-              <Twitter className="h-5 w-5" />
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors hover:scale-110 transform">
-              <Linkedin className="h-5 w-5" />
+            
+            <a href="https://github.com/mishtimattu21/hackwell-medora.git" className="text-muted-foreground hover:text-primary transition-colors hover:scale-110 transform">
+              <Github className="h-5 w-5" />
             </a>
           </div>
         </div>
