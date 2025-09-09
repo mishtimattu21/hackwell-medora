@@ -340,11 +340,20 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 6. **Risk Progression Analysis**: Historical trends and future projections
 7. **Disclaimers**: Professional medical disclaimers and limitations
 
-### Sample Report Pages
+### Main Workflow
 
-_[Placeholder for sample PDF report page 1 showing executive summary and risk metrics]_
+![Workflow](frontend/public/flow.png)
+_Main worflow of the Platform_
 
-_[Placeholder for sample PDF report page 2 showing factor analysis and recommendations]_
+### Report Sample
+
+![Sample Report](frontend/public/sample.jpg)
+_Report_
+
+### Dependencies
+
+![Focus](frontend/public/dependencies.jpg)
+_Frontend and Backend Dependencies_
 
 ---
 
