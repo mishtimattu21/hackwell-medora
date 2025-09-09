@@ -25,7 +25,6 @@ const Header = () => {
             <img src="/logo_butterfly.png" alt="MedPredict Logo" className="h-10 w-auto md:h-12" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">
               Medora
-              Medora
             </span>
           </Link>
 

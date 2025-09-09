@@ -9,7 +9,6 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
-              <Activity className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold text-foreground">Medora</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
