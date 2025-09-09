@@ -1,4 +1,4 @@
-# Medora <img src="logo_butterfly.png" alt="Medora Logo" width="40" height="40">
+#<img src="logo_butterfly.png" alt="Medora Logo" width="40" height="40">  #Medora 
 
 ## AI-Powered Health Risk Prediction Platform
 
