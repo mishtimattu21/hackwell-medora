@@ -165,10 +165,15 @@ def load_models(models_dir: Path) -> Dict[int, Any]:
 app = FastAPI(title="Disease Probability API", version="1.0.0")
 app = FastAPI()
 
+# Get CORS origins from environment variable
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+cors_origins = [origin.strip() for origin in cors_origins if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all for testing
-    allow_methods=["*"],
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"]
 )
 
@@ -191,6 +196,17 @@ except Exception as _e:
 def health() -> Dict[str, Any]:
     available = {i: (MODELS.get(i) is not None) for i in range(1, 6)}
     return {"status": "ok", "models": available}
+
+@app.get("/debug")
+def debug() -> Dict[str, Any]:
+    return {
+        "cors_origins": cors_origins,
+        "environment": {
+            "CORS_ORIGINS": os.getenv("CORS_ORIGINS"),
+            "PORT": os.getenv("PORT"),
+            "OPENAI_API_KEY_SET": bool(os.getenv("OPENAI_API_KEY"))
+        }
+    }
 
 
 @app.get("/random-data/{disease_type}")
