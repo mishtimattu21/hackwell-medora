@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -6,12 +7,92 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Star,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 
 const Landing = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [messageLength, setMessageLength] = useState(0);
+
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const form = e.currentTarget as HTMLFormElement;
+      const formData = new FormData(form);
+      const name = String(formData.get('name') || '').trim();
+      const email = String(formData.get('email') || '').trim();
+      const message = String(formData.get('message') || '').trim();
+      
+      // Validation
+      if (!name || !email || !message) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in all required fields (name, email, and message).",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Message length validation
+      if (message.length < 10) {
+        toast({
+          title: "Message Too Short",
+          description: "Please provide a more detailed message (at least 10 characters).",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast({
+          title: "Invalid Email",
+          description: "Please enter a valid email address.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Submit to Supabase
+      const { error } = await supabase
+        .from('contacts')
+        .insert([{ name, email, message, source: 'landing' }]);
+      
+      if (error) {
+        throw error;
+      }
+
+      // Success
+      toast({
+        title: "Message Sent Successfully!",
+        description: "Thank you for your message. We'll get back to you within 24 hours.",
+        duration: 5000,
+      });
+      
+      form.reset();
+    } catch (error: any) {
+      console.error('Contact form error:', error);
+      toast({
+        title: "Failed to Send Message",
+        description: error.message || "An unexpected error occurred. Please try again later.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -248,53 +329,71 @@ const Landing = () => {
 
             <Card className="shadow-soft border-0 frosted">
               <CardContent className="p-8">
-                <form className="space-y-6" onSubmit={async (e) => {
-                  e.preventDefault();
-                  const form = e.currentTarget as HTMLFormElement;
-                  const formData = new FormData(form);
-                  const name = String(formData.get('name') || '').trim();
-                  const email = String(formData.get('email') || '').trim();
-                  const message = String(formData.get('message') || '').trim();
-                  if (!name || !email || !message) {
-                    alert('Please fill in name, email and message.');
-                    return;
-                  }
-                  const { error } = await supabase
-                    .from('contacts')
-                    .insert([{ name, email, message, source: 'landing' }]);
-                  if (error) {
-                    alert('Failed to send. Please try again.');
-                    return;
-                  }
-                  alert('Message sent! We will get back to you soon.');
-                  form.reset();
-                }}>
+                <form className="space-y-6" onSubmit={handleContactSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Name
+                        Name <span className="text-red-500">*</span>
                       </label>
-                      <Input name="name" placeholder="Your name" className="bg-background/50" />
+                      <Input 
+                        name="name" 
+                        placeholder="Your name" 
+                        className="bg-background/50" 
+                        disabled={isSubmitting}
+                        required
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Email
+                        Email <span className="text-red-500">*</span>
                       </label>
-                      <Input name="email" type="email" placeholder="your.email@example.com" className="bg-background/50" />
+                      <Input 
+                        name="email" 
+                        type="email" 
+                        placeholder="your.email@example.com" 
+                        className="bg-background/50" 
+                        disabled={isSubmitting}
+                        required
+                      />
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Message
+                      Message <span className="text-red-500">*</span>
                     </label>
                     <Textarea 
                       name="message"
                       placeholder="Tell us how we can help..."
                       className="min-h-[120px] bg-background/50"
+                      disabled={isSubmitting}
+                      required
+                      onChange={(e) => setMessageLength(e.target.value.length)}
                     />
+                    <div className="flex justify-between items-center mt-1">
+                      <span className={`text-xs ${messageLength > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {messageLength > 0 && `${messageLength} characters`}
+                      </span>
+                      <span className={`text-xs ${messageLength < 10 && messageLength > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                        {messageLength < 10 && messageLength > 0 ? 'Minimum 10 characters required' : 'Minimum 10 characters'}
+                      </span>
+                    </div>
                   </div>
-                  <Button type="submit" className="medical-gradient text-white hover:shadow-glow transition-all duration-300 w-full">
-                    Send Message
+                  <Button 
+                    type="submit" 
+                    className="medical-gradient text-white hover:shadow-glow transition-all duration-300 w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Sending Message...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Send Message
+                      </>
+                    )}
                   </Button>
                 </form>
               </CardContent>
