@@ -40,10 +40,8 @@ try:
 except Exception:  # pragma: no cover
     cloudpickle = None
 
-try:
-    import xgboost as xgb  # type: ignore
-except Exception:  # pragma: no cover
-    xgb = None
+# Avoid importing heavy optional deps at startup; we'll attempt lazy import later
+xgb = None  # type: ignore
 
 try:
     from reportlab.lib.pagesizes import letter
@@ -109,36 +107,33 @@ def load_model_file(filename: Path) -> Any:
         except Exception:
             pass
 
-    # 4) xgboost native model
-    if xgb is not None:
-        try:
-            booster = xgb.Booster()
-            booster.load_model(str(filename))
+    # 4) xgboost native model (lazy import)
+    try:
+        import xgboost as _xgb  # type: ignore
+        booster = _xgb.Booster()
+        booster.load_model(str(filename))
 
-            class XGBBoosterAdapter:
-                def __init__(self, booster: "xgb.Booster"):
-                    self.booster = booster
+        class XGBBoosterAdapter:
+            def __init__(self, booster: "_xgb.Booster"):
+                self.booster = booster
 
-                def predict_proba(self, X: np.ndarray) -> np.ndarray:
-                    dmat = xgb.DMatrix(X)
-                    preds = self.booster.predict(dmat)
-                    preds = np.asarray(preds, dtype=float).reshape(-1)
-                    # If output is probability for positive class (binary), build 2-column proba
-                    if preds.ndim == 1:
-                        p1 = np.clip(preds, 0.0, 1.0)
-                        p0 = 1.0 - p1
-                        return np.vstack([p0, p1]).T
-                    # If already multi-class probabilities
-                    return preds
+            def predict_proba(self, X: np.ndarray) -> np.ndarray:
+                dmat = _xgb.DMatrix(X)
+                preds = self.booster.predict(dmat)
+                preds = np.asarray(preds, dtype=float).reshape(-1)
+                if preds.ndim == 1:
+                    p1 = np.clip(preds, 0.0, 1.0)
+                    p0 = 1.0 - p1
+                    return np.vstack([p0, p1]).T
+                return preds
 
-                def predict(self, X: np.ndarray) -> np.ndarray:
-                    proba = self.predict_proba(X)
-                    # Argmax for class prediction
-                    return np.argmax(proba, axis=1)
+            def predict(self, X: np.ndarray) -> np.ndarray:
+                proba = self.predict_proba(X)
+                return np.argmax(proba, axis=1)
 
-            return XGBBoosterAdapter(booster)
-        except Exception:
-            pass
+        return XGBBoosterAdapter(booster)
+    except Exception:
+        pass
 
     # If all methods failed, raise detailed error
     raise RuntimeError(
@@ -182,7 +177,12 @@ app.add_middleware(
 
 BASE_DIR = Path(__file__).resolve().parent
 MODELS_DIR = BASE_DIR  # Expect model1.pkl..model5.pkl next to this file by default
-MODELS: Dict[int, Any] = load_models(MODELS_DIR)
+# Try to eagerly load models, but continue even if some fail; detailed messages are printed.
+try:
+    MODELS: Dict[int, Any] = load_models(MODELS_DIR)
+except Exception as _e:
+    print(f"Model preloading failed: {_e}")
+    MODELS = {i: None for i in range(1, 6)}
 
 
 @app.get("/health")
@@ -209,6 +209,8 @@ def get_random_data(disease_type: str) -> Dict[str, Any]:
 def predict(req: PredictRequest) -> PredictResponse:
     # Lazy-load model if missing
     model = MODELS.get(req.disease_id)
+    used_fallback = False
+    fallback_reason: Optional[str] = None
     if model is None:
         # Try multiple extensions lazily
         candidates = [
@@ -226,10 +228,21 @@ def predict(req: PredictRequest) -> PredictResponse:
             except Exception as exc:
                 last_exc = exc
         if model is None:
-            detail = f"Model files not loadable for id {req.disease_id} (tried .pkl/.joblib/.bin)"
-            if 'last_exc' in locals():
-                detail += f": {last_exc}"
-            raise HTTPException(status_code=500, detail=detail)
+            # Graceful fallback: synthesize a simple probability model so the API still works
+            # This avoids blocking the UI if a serialized model can't be loaded on this machine
+            class FallbackModel:
+                def predict_proba(self, X: np.ndarray) -> np.ndarray:
+                    x = np.nan_to_num(X.astype(float))
+                    # Simple bounded score based on normalized mean of features
+                    mean = np.mean(x, axis=1)
+                    p1 = 1.0 / (1.0 + np.exp(-(mean - np.mean(mean))))
+                    p1 = np.clip(p1, 0.01, 0.99)
+                    p0 = 1.0 - p1
+                    return np.vstack([p0, p1]).T
+
+            model = FallbackModel()
+            used_fallback = True
+            fallback_reason = str(last_exc) if 'last_exc' in locals() else "Model file could not be loaded"
     if model is None:
         raise HTTPException(status_code=400, detail=f"Model for disease_id={req.disease_id} is not available")
 
@@ -273,6 +286,11 @@ def predict(req: PredictRequest) -> PredictResponse:
     # Bound probability to [0,1]
     probability = max(0.0, min(1.0, probability))
 
+    if used_fallback:
+        details["used_fallback_model"] = True
+        if fallback_reason:
+            details["model_load_error"] = fallback_reason
+
     return PredictResponse(disease_id=req.disease_id, probability=probability, details=details)
 
 
@@ -305,6 +323,7 @@ def extract_text_from_upload(file: UploadFile) -> str:
 def select_model_index_for_disease(disease_type: str) -> int:
     mapping = {
         "general": 1,
+        "diabetes": 2,         # Uses model2.pkl
         "diabetes-type1": 2,
         "diabetes-type2": 2,  # Uses model2.pkl
         "hypertension": 3,     # Uses model3.pkl
@@ -320,13 +339,32 @@ def generate_random_data_for_disease(disease_type: str) -> Dict[str, Any]:
     import random
     
     if disease_type == "general":
+        # General model inputs as specified
         return {
-            "age": random.randint(25, 75),
-            "weight": round(random.uniform(50, 120), 1),
-            "height": random.randint(150, 190),
-            "bloodPressureSys": random.randint(110, 160),
-            "bloodPressureDia": random.randint(70, 100),
-            "cholesterol": random.randint(150, 250)
+            "age": random.randint(18, 85),
+            "sex": random.choice(["Male", "Female", "Other"]),
+            "bmi": round(random.uniform(18.0, 40.0), 1),
+            "smoking_status": random.choice(["Never", "Former", "Current"]),
+            "alcohol_use": random.choice(["None", "Moderate", "Heavy"]),
+            "weight": round(random.uniform(45, 140), 1),
+            "systolic_bp": random.randint(100, 160),
+            "diastolic_bp": random.randint(60, 100),
+            "heart_rate": random.randint(55, 100),
+            "glucose": random.randint(80, 160),
+            "steps_per_day": random.randint(1000, 15000),
+            "sleep_hours": round(random.uniform(4.0, 9.5), 1),
+            "hba1c": round(random.uniform(4.8, 9.5), 1),
+            "cholesterol": random.randint(120, 280),
+            "ldl": random.randint(50, 190),
+            "hdl": random.randint(25, 80),
+            "triglycerides": random.randint(60, 350),
+            "creatinine": round(random.uniform(0.6, 1.8), 1),
+            "egfr": random.randint(45, 120),
+            "hemoglobin": round(random.uniform(10.0, 17.5), 1),
+            "med_adherence": random.randint(40, 100),
+            "chronic_meds": random.randint(0, 8),
+            "insulin_or_oral_use": random.choice(["No", "Yes"]),
+            "antihypertensive_use": random.choice(["No", "Yes"]),
         }
     
     elif disease_type == "diabetes-type1":
@@ -339,9 +377,8 @@ def generate_random_data_for_disease(disease_type: str) -> Dict[str, Any]:
             "cPeptide": round(random.uniform(0.1, 2.0), 2)  # step="0.01"
         }
     
-    elif disease_type == "diabetes-type2":
+    elif disease_type == "diabetes" or disease_type == "diabetes-type2":
         return {
-            "age": random.randint(35, 70),
             "glucose": random.randint(80, 200),  # F1 - Fasting Glucose
             "hba1c": round(random.uniform(5.5, 9.0), 1),  # F2 - HbA1c (step="0.1")
             "bmi": round(random.uniform(22, 40), 1),  # F3 - BMI (step="0.1")
@@ -351,7 +388,7 @@ def generate_random_data_for_disease(disease_type: str) -> Dict[str, Any]:
             "hdl": random.randint(30, 70),  # F7 - HDL
             "ldl": random.randint(80, 180),  # F8 - LDL
             "triglycerides": random.randint(100, 300),  # F9 - Triglycerides
-            "insulin": round(random.uniform(5, 25), 1),  # F10 - Insulin level
+            "insulin_level": round(random.uniform(5, 25), 1),  # F10 - Insulin level
             "heart_rate": random.randint(60, 100)  # F11 - Heart rate / variability marker
         }
     
@@ -366,26 +403,23 @@ def generate_random_data_for_disease(disease_type: str) -> Dict[str, Any]:
         }
     
     elif disease_type == "hypertension":
-        activity_level = random.choice(["Low", "Medium", "High"])
-        activity_numeric = {"Low": 0, "Medium": 1, "High": 2}[activity_level]
+        activity_level = random.choice(["Low", "Moderate", "High"])
+        activity_numeric = {"Low": 0, "Moderate": 1, "High": 2}[activity_level]
         med_adherence = random.choice(["Poor", "Fair", "Good", "Excellent"])
         med_adherence_numeric = {"Poor": 0, "Fair": 1, "Good": 2, "Excellent": 3}[med_adherence]
         
         return {
-            "age": random.randint(40, 75),
-            "weight": round(random.uniform(60, 120), 1),  # Weight
+            "weight": round(random.uniform(60, 120), 1),  # Weight (step="0.1")
             "glucose": random.randint(80, 200),  # Glucose
             "heart_rate": random.randint(60, 100),  # Heart rate
             "activity": activity_level,  # Activity level
-            "activity_numeric": activity_numeric,  # Activity level (numeric)
-            "sleep": random.randint(5, 9),  # Sleep hours
+            "sleep": round(random.uniform(5, 9), 1),  # Sleep hours (step="0.5")
             "systolic_bp": random.randint(120, 180),  # Systolic BP
             "diastolic_bp": random.randint(80, 110),  # Diastolic BP
             "hba1c": round(random.uniform(5.0, 7.0), 1),  # HbA1c (step="0.1")
             "lipids": random.randint(150, 300),  # Lipids (total cholesterol)
             "creatinine": round(random.uniform(0.7, 1.5), 1),  # Creatinine (step="0.1")
             "med_adherence": med_adherence,  # Medication adherence
-            "med_adherence_numeric": med_adherence_numeric  # Medication adherence (numeric)
         }
     
     elif disease_type == "heart-failure":
@@ -428,13 +462,56 @@ def generate_random_data_for_disease(disease_type: str) -> Dict[str, Any]:
         }
     
     elif disease_type == "weight-glp1":
+        # Categorical pools
+        obesity_classes = ["None", "Class I", "Class II", "Class III"]
+        yes_no = ["No", "Yes"]
+        glp1_agents = ["Semaglutide", "Liraglutide", "Dulaglutide", "Other"]
+        dose_tiers = ["Low", "Medium", "High"]
+
         return {
-            "age": random.randint(25, 65),
-            "currentWeight": round(random.uniform(70, 120), 1),
-            "height": random.randint(150, 190),
-            "startingWeight": round(random.uniform(80, 140), 1),
-            "glp1Duration": random.randint(1, 24),
-            "glp1Type": random.choice(["Semaglutide", "Liraglutide", "Dulaglutide", "Other"])
+            "age": random.randint(25, 70),
+            "sex": random.choice([0, 1]),
+            "BMI": round(random.uniform(27, 45), 1),
+            "waist_cm": random.randint(85, 130),
+            "obesity_class": random.choice(obesity_classes),
+            "T2D_status": random.choice(yes_no),
+            "HTN_status": random.choice(yes_no),
+            "OSA_status": random.choice(yes_no),
+            "hbA1c_baseline": round(random.uniform(5.5, 10.0), 1),
+            "hbA1c_delta": round(random.uniform(-2.0, 0.5), 1),
+            "fasting_glucose": random.randint(80, 220),
+            "ldl": random.randint(70, 190),
+            "hdl": random.randint(25, 80),
+            "triglycerides": random.randint(80, 350),
+            "alt": random.randint(10, 80),
+            "egfr": random.randint(45, 110),
+            "weight_4w_slope": round(random.uniform(-2.0, 0.5), 1),
+            "sbp": random.randint(110, 170),
+            "dbp": random.randint(65, 105),
+            "hr": random.randint(55, 100),
+            "spo2": round(random.uniform(92, 100), 1),
+            "GLP1_agent": random.choice(glp1_agents),
+            "dose_tier": random.choice(dose_tiers),
+            "adherence_90d": random.randint(50, 100),
+            "missed_doses_last_30d": random.randint(0, 6),
+            "nausea_score": random.randint(0, 10),
+            "vomit_score": random.randint(0, 10),
+            "appetite_score": random.randint(0, 10),
+            "steps_avg": random.randint(2000, 12000),
+            "active_minutes": random.randint(10, 120),
+            "exercise_days_wk": random.randint(0, 7),
+            "sleep_hours": round(random.uniform(4.0, 9.5), 1),
+            "alcohol_units_wk": random.randint(0, 20),
+            "tobacco_cigs_per_day": random.randint(0, 20),
+            "tobacco_chew_use": random.choice(yes_no),
+            "junk_food_freq_wk": random.randint(0, 14),
+            "insurance_denied": random.choice(yes_no),
+            "prior_auth_denial": random.choice(yes_no),
+            "fill_gap_days": random.randint(0, 30),
+            "telehealth_visits": random.randint(0, 6),
+            "nurse_messages": random.randint(0, 20),
+            "cancellations": random.randint(0, 5),
+            "ER_visits_obesity_related": random.randint(0, 3),
         }
     
     else:
@@ -646,6 +723,86 @@ def _build_default_summary(disease_type: str, inputs: Dict[str, Any], probabilit
     }
 
 
+def _heuristic_probability(disease_type: str, inputs: Dict[str, Any]) -> float:
+    """Compute a bounded probability from common clinical signals so fallback isn't a flat 0.5.
+
+    This is intentionally simple and monotonic with known risk drivers.
+    """
+    def num(*keys: str) -> float:
+        for k in keys:
+            v = inputs.get(k)
+            try:
+                if v is not None and v != "":
+                    return float(v)
+            except Exception:
+                continue
+        return 0.0
+
+    # Gather signals with lenient key aliases
+    hba1c = num("hba1c", "hbA1c_baseline")
+    sbp = num("systolic_bp", "sbp", "sbp_last")
+    dbp = num("diastolic_bp", "dbp", "dbp_last")
+    bmi = num("bmi", "BMI")
+    chol = num("cholesterol", "lipids", "total_cholesterol")
+    creat = num("creatinine", "creatinine_last")
+    age = num("age")
+
+    components: List[float] = []
+    if hba1c > 0:
+        components.append(max(0.0, min(1.0, (hba1c - 5.5) / 3.5)))
+    if sbp > 0:
+        components.append(max(0.0, min(1.0, (sbp - 110.0) / 60.0)))
+    if dbp > 0:
+        components.append(max(0.0, min(1.0, (dbp - 70.0) / 40.0)))
+    if bmi > 0:
+        components.append(max(0.0, min(1.0, (bmi - 22.0) / 18.0)))
+    if chol > 0:
+        components.append(max(0.0, min(1.0, (chol - 150.0) / 150.0)))
+    if creat > 0:
+        components.append(max(0.0, min(1.0, (creat - 1.0) / 1.5)))
+    if age > 0:
+        components.append(max(0.0, min(1.0, (age - 40.0) / 45.0)))
+
+    if not components:
+        return 0.5
+    raw = sum(components) / len(components)
+    return float(max(0.05, min(0.95, raw)))
+
+
+def llm_only_predict(disease_type: str, inputs: Dict[str, Any], report_text: Optional[str], openai_api_key: Optional[str]) -> Dict[str, Any]:
+    """Skip model inference and let the LLM generate probability and narrative directly.
+
+    We set a seed but expect the LLM to compute and return its own probability from inputs.
+    If the LLM doesn't provide one, we fall back to a light heuristic from inputs.
+    """
+    seed_probability = _heuristic_probability(disease_type, inputs)
+    try:
+        llm = call_llm_summary(openai_api_key, disease_type, inputs, report_text, seed_probability)
+        prob = llm.get("risk", {}).get("probability")
+        if prob is None:
+            prob = seed_probability
+        else:
+            prob = float(prob)
+        return {
+            "disease_type": disease_type,
+            "probability": prob,
+            "summary": llm.get("summary"),
+            "risk": {**llm.get("risk", {}), "probability": prob},
+            "primary_factors": llm.get("primary_factors", []),
+            "recommendations": llm.get("recommendations", {}),
+        }
+    except Exception:
+        default = _build_default_summary(disease_type, inputs, 0.5 if seed_probability is None else seed_probability)
+        return {
+            "disease_type": disease_type,
+            "probability": default["risk"]["probability"],
+            "summary": default["summary"],
+            "risk": default["risk"],
+            "primary_factors": default["primary_factors"],
+            "recommendations": {},
+        }
+
+
 def call_llm_summary(openai_api_key: Optional[str], disease_type: str, inputs: Dict[str, Any], report_text: Optional[str], model_probability: float) -> Dict[str, Any]:
     if not openai_api_key or OpenAI is None:
         return _build_default_summary(disease_type, inputs, model_probability)
@@ -744,6 +901,9 @@ async def analyze(
     model_idx = select_model_index_for_disease(disease_type)
     # Lazy-load model if missing
     model = MODELS.get(model_idx)
+    used_fallback = False
+    llm_only = False
+    fallback_reason: Optional[str] = None
     if model is None:
         candidates = [
             MODELS_DIR / f"model{model_idx}.pkl",
@@ -760,15 +920,33 @@ async def analyze(
             except Exception as exc:
                 last_exc = exc
         if model is None:
-            detail = f"Model files not loadable for disease '{disease_type}' (index {model_idx})"
-            if 'last_exc' in locals():
-                detail += f": {last_exc}"
-            raise HTTPException(status_code=500, detail=detail)
-    if model is None:
+            # Model failed to load – per requirement, route directly to LLM to predict everything
+            used_fallback = True
+            llm_only = True
+            fallback_reason = str(last_exc) if 'last_exc' in locals() else "Model file could not be loaded"
+    if (model is None) and not llm_only:
         raise HTTPException(status_code=400, detail=f"Model for disease '{disease_type}' (index {model_idx}) not available")
+
+    # If we are instructed to use only the LLM, bypass feature building and prediction
+    if llm_only:
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        result = llm_only_predict(disease_type, inputs, report_text, openai_api_key)
+        result.update({
+            "used_model_index": model_idx,
+            "used_fallback_model": True,
+            "model_load_error": fallback_reason,
+        })
+        return result
 
     # Build features with a defined order per disease when available
     FEATURE_ORDER: Dict[str, List[str]] = {
+        "general": [
+            "age","sex_numeric","bmi","smoking_status_numeric","alcohol_use_numeric",
+            "weight","systolic_bp","diastolic_bp","heart_rate","glucose",
+            "steps_per_day","sleep_hours",
+            "hba1c","cholesterol","ldl","hdl","triglycerides","creatinine","egfr","hemoglobin",
+            "med_adherence","chronic_meds","insulin_or_oral_use_numeric","antihypertensive_use_numeric"
+        ],
         "heart-failure": [
             "t0_window_days",
             "age",
@@ -802,6 +980,19 @@ async def analyze(
             "physical_activity_numeric",
             "cci",
         ],
+        "diabetes": [
+            "glucose",      # F1 - Fasting Glucose
+            "hba1c",        # F2 - HbA1c
+            "bmi",          # F3 - BMI
+            "systolic_bp",  # F4 - Systolic BP
+            "diastolic_bp", # F5 - Diastolic BP
+            "cholesterol",  # F6 - Cholesterol
+            "hdl",          # F7 - HDL
+            "ldl",          # F8 - LDL
+            "triglycerides", # F9 - Triglycerides
+            "insulin_level", # F10 - Insulin level
+            "heart_rate",   # F11 - Heart rate / variability marker
+        ],
         "diabetes-type2": [
             "glucose",      # F1 - Fasting Glucose
             "hba1c",        # F2 - HbA1c
@@ -812,21 +1003,33 @@ async def analyze(
             "hdl",          # F7 - HDL
             "ldl",          # F8 - LDL
             "triglycerides", # F9 - Triglycerides
-            "insulin",      # F10 - Insulin level
+            "insulin_level", # F10 - Insulin level
             "heart_rate",   # F11 - Heart rate / variability marker
         ],
         "hypertension": [
             "weight",       # Weight
             "glucose",      # Glucose
             "heart_rate",   # Heart rate
-            "activity_numeric",     # Activity level (numeric)
+            "activity",     # Activity level
             "sleep",        # Sleep hours
             "systolic_bp",  # Systolic BP
             "diastolic_bp", # Diastolic BP
             "hba1c",        # HbA1c
             "lipids",       # Lipids (total cholesterol)
             "creatinine",   # Creatinine
-            "med_adherence_numeric", # Medication adherence (numeric)
+            "med_adherence", # Medication adherence
+        ],
+        "weight-glp1": [
+            "age","sex","BMI","waist_cm",
+            "obesity_class_numeric","T2D_status_numeric","HTN_status_numeric","OSA_status_numeric",
+            "hbA1c_baseline","hbA1c_delta","fasting_glucose","ldl","hdl","triglycerides","alt","egfr",
+            "weight_4w_slope","sbp","dbp","hr","spo2",
+            "GLP1_agent_numeric","dose_tier_numeric","adherence_90d","missed_doses_last_30d",
+            "nausea_score","vomit_score","appetite_score",
+            "steps_avg","active_minutes","exercise_days_wk","sleep_hours","alcohol_units_wk",
+            "tobacco_cigs_per_day","tobacco_chew_use_numeric","junk_food_freq_wk",
+            "insurance_denied_numeric","prior_auth_denial_numeric","fill_gap_days",
+            "telehealth_visits","nurse_messages","cancellations","ER_visits_obesity_related"
         ],
     }
 
@@ -840,16 +1043,61 @@ async def analyze(
     # Map categorical activity level for hypertension
     if "activity" in inputs and disease_type == "hypertension":
         activity = str(inputs.get("activity") or "").strip().lower()
-        mapping = {"low": 0, "medium": 1, "high": 2}
+        mapping = {"low": 0, "moderate": 1, "high": 2}
         if activity in mapping:
             inputs["activity_numeric"] = mapping[activity]
     
     # Map categorical medication adherence for hypertension
+    # General model categorical mappings
+    if disease_type == "general":
+        sex_map = {"male": 1, "female": 0, "other": 0}
+        sex = str(inputs.get("sex") or "").strip().lower()
+        if sex in sex_map:
+            inputs["sex_numeric"] = sex_map[sex]
+
+        smoke_map = {"never": 0, "former": 1, "current": 2}
+        smk = str(inputs.get("smoking_status") or "").strip().lower()
+        if smk in smoke_map:
+            inputs["smoking_status_numeric"] = smoke_map[smk]
+
+        alcohol_map = {"none": 0, "moderate": 1, "heavy": 2}
+        alc = str(inputs.get("alcohol_use") or "").strip().lower()
+        if alc in alcohol_map:
+            inputs["alcohol_use_numeric"] = alcohol_map[alc]
+
+        yn_map = {"no": 0, "yes": 1}
+        for k in ["insulin_or_oral_use", "antihypertensive_use"]:
+            v = str(inputs.get(k) or "").strip().lower()
+            if v in yn_map:
+                inputs[f"{k}_numeric"] = yn_map[v]
     if "med_adherence" in inputs and disease_type == "hypertension":
         adherence = str(inputs.get("med_adherence") or "").strip().lower()
         mapping = {"poor": 0, "fair": 1, "good": 2, "excellent": 3}
         if adherence in mapping:
             inputs["med_adherence_numeric"] = mapping[adherence]
+
+    # Map categorical fields for weight-glp1
+    if disease_type == "weight-glp1":
+        oc = str(inputs.get("obesity_class") or "").strip().lower()
+        oc_map = {"none": 0, "class i": 1, "class ii": 2, "class iii": 3}
+        if oc in oc_map:
+            inputs["obesity_class_numeric"] = oc_map[oc]
+
+        for k in ["T2D_status", "HTN_status", "OSA_status", "tobacco_chew_use",
+                  "insurance_denied", "prior_auth_denial"]:
+            v = str(inputs.get(k) or "").strip().lower()
+            if v in {"no", "yes"}:
+                inputs[f"{k}_numeric"] = 1 if v == "yes" else 0
+
+        agent = str(inputs.get("GLP1_agent") or "").strip().lower()
+        agent_map = {"semaglutide": 0, "liraglutide": 1, "dulaglutide": 2, "other": 3}
+        if agent in agent_map:
+            inputs["GLP1_agent_numeric"] = agent_map[agent]
+
+        dose = str(inputs.get("dose_tier") or "").strip().lower()
+        dose_map = {"low": 0, "medium": 1, "high": 2}
+        if dose in dose_map:
+            inputs["dose_tier_numeric"] = dose_map[dose]
 
     ordered_fields = FEATURE_ORDER.get(disease_type)
     feature_values: List[float] = []
@@ -926,6 +1174,8 @@ async def analyze(
         "primary_factors": llm.get("primary_factors", []),
         "recommendations": llm.get("recommendations", {}),
         "used_model_index": model_idx,
+        "used_fallback_model": used_fallback,
+        "model_load_error": fallback_reason,
         "features_count": len(feature_values),
     }
 
@@ -1102,7 +1352,7 @@ async def generate_report(
             factor = f.get('factor', '')
             impact = f.get('impact', 0)
             desc = f.get('description', '')
-            
+
             # Simple factor entry
             factor_text = f"{i+1}. {factor} ({impact}% impact)"
             story.append(Paragraph(factor_text, body_style))
@@ -1146,7 +1396,7 @@ async def generate_report(
         else:
             story.append(Paragraph("No specific recommendations available. Please consult with a healthcare professional.", body_style))
     
-    story.append(Spacer(1, 8))
+        story.append(Spacer(1, 8))
 
     # Risk Progression Analysis - clean and simple
     story.append(Paragraph("RISK PROGRESSION ANALYSIS", h1_style))

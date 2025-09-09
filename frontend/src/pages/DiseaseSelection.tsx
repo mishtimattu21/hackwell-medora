@@ -21,9 +21,9 @@ const DiseaseSelection = () => {
       iconColor: "text-blue-500"
     },
     {
-      id: "diabetes-type1",
+      id: "diabetes",
       title: "Diabetes",
-      description: "Insulin-dependent diabetes risk analysis and management insights",
+      description: "Type 2 diabetes risk analysis with F1-F11 parameters",
       icon: Droplets,
       color: "bg-red-500/10 hover:bg-red-500/20",
       iconColor: "text-red-500"

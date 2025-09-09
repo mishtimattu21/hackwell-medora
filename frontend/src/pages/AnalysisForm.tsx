@@ -19,56 +19,70 @@ const AnalysisForm = () => {
     general: {
       title: "General Health Analysis",
       fields: [
-        { name: "age", label: "Age", type: "number", placeholder: "30" },
-        { name: "weight", label: "Weight (kg)", type: "number", placeholder: "70" },
-        { name: "height", label: "Height (cm)", type: "number", placeholder: "175" },
-        { name: "bloodPressureSys", label: "Systolic BP (mmHg)", type: "number", placeholder: "120" },
-        { name: "bloodPressureDia", label: "Diastolic BP (mmHg)", type: "number", placeholder: "80" },
-        { name: "cholesterol", label: "Total Cholesterol (mg/dL)", type: "number", placeholder: "180" },
-      ]
-    },
-    "diabetes-type1": {
-      title: "Type-1 Diabetes Analysis",
-      fields: [
-        { name: "age", label: "Age", type: "number", placeholder: "25" },
-        { name: "hba1c", label: "HbA1c (%)", type: "number", placeholder: "7.0", step: "0.1" },
-        { name: "bmi", label: "BMI", type: "number", placeholder: "22.5", step: "0.1" },
-        { name: "insulinDose", label: "Daily Insulin (units)", type: "number", placeholder: "40" },
-        { name: "glucoseFasting", label: "Fasting Glucose (mg/dL)", type: "number", placeholder: "100" },
-        { name: "cPeptide", label: "C-Peptide (ng/mL)", type: "number", placeholder: "0.1", step: "0.01" },
-      ]
-    },
-    "diabetes-type2": {
-      title: "Type-2 Diabetes Analysis", 
-      fields: [
-        { name: "age", label: "Age", type: "number", placeholder: "45" },
-        { name: "hba1c", label: "HbA1c (%)", type: "number", placeholder: "6.8", step: "0.1" },
-        { name: "bmi", label: "BMI", type: "number", placeholder: "28.5", step: "0.1" },
-        { name: "glucoseFasting", label: "Fasting Glucose (mg/dL)", type: "number", placeholder: "110" },
-        { name: "triglycerides", label: "Triglycerides (mg/dL)", type: "number", placeholder: "150" },
-        { name: "hdl", label: "HDL Cholesterol (mg/dL)", type: "number", placeholder: "45" },
-      ]
-    },
-    prediabetes: {
-      title: "Prediabetes Analysis",
-      fields: [
-        { name: "age", label: "Age", type: "number", placeholder: "40" },
-        { name: "bmi", label: "BMI", type: "number", placeholder: "26.0", step: "0.1" },
-        { name: "glucoseFasting", label: "Fasting Glucose (mg/dL)", type: "number", placeholder: "105" },
+        // Demographics & Baseline
+        { name: "age", label: "Age (years)", type: "number", placeholder: "35" },
+        { name: "sex", label: "Sex", type: "select", options: ["Male", "Female", "Other"] },
+        { name: "bmi", label: "BMI (kg/m²)", type: "number", placeholder: "24.5", step: "0.1" },
+        { name: "smoking_status", label: "Smoking Status", type: "select", options: ["Never", "Former", "Current"] },
+        { name: "alcohol_use", label: "Alcohol Use", type: "select", options: ["None", "Moderate", "Heavy"] },
+
+        // Vitals & Logs
+        { name: "weight", label: "Weight (kg)", type: "number", placeholder: "72", step: "0.1" },
+        { name: "systolic_bp", label: "Blood Pressure – Systolic (mmHg)", type: "number", placeholder: "120" },
+        { name: "diastolic_bp", label: "Blood Pressure – Diastolic (mmHg)", type: "number", placeholder: "80" },
+        { name: "heart_rate", label: "Heart Rate (bpm)", type: "number", placeholder: "72" },
+        { name: "glucose", label: "Daily Glucose (mg/dL)", type: "number", placeholder: "100" },
+        { name: "steps_per_day", label: "Activity Level (steps/day)", type: "number", placeholder: "6000" },
+        { name: "sleep_hours", label: "Sleep Duration (hours/night)", type: "number", placeholder: "7.5", step: "0.1" },
+
+        // Laboratory Values
         { name: "hba1c", label: "HbA1c (%)", type: "number", placeholder: "5.8", step: "0.1" },
-        { name: "waistCircumference", label: "Waist Circumference (cm)", type: "number", placeholder: "90" },
-        { name: "familyHistory", label: "Family History of Diabetes", type: "select", options: ["No", "Yes"] },
+        { name: "cholesterol", label: "Total Cholesterol (mg/dL)", type: "number", placeholder: "180" },
+        { name: "ldl", label: "LDL (mg/dL)", type: "number", placeholder: "110" },
+        { name: "hdl", label: "HDL (mg/dL)", type: "number", placeholder: "50" },
+        { name: "triglycerides", label: "Triglycerides (mg/dL)", type: "number", placeholder: "150" },
+        { name: "creatinine", label: "Creatinine (mg/dL)", type: "number", placeholder: "1.0", step: "0.1" },
+        { name: "egfr", label: "eGFR (ml/min/1.73 m²)", type: "number", placeholder: "95" },
+        { name: "hemoglobin", label: "Hemoglobin (g/dL)", type: "number", placeholder: "14.0", step: "0.1" },
+
+        // Medications
+        { name: "med_adherence", label: "Medication Adherence (%)", type: "number", placeholder: "85" },
+        { name: "chronic_meds", label: "Number of Prescribed Chronic Meds", type: "number", placeholder: "2" },
+        { name: "insulin_or_oral_use", label: "Insulin/Oral Hypoglycemic Use", type: "select", options: ["No", "Yes"] },
+        { name: "antihypertensive_use", label: "Antihypertensive Use", type: "select", options: ["No", "Yes"] },
       ]
     },
+    "diabetes": {
+      title: "Diabetes Analysis",
+      fields: [
+        { name: "glucose", label: "Fasting Glucose (mg/dL)", type: "number", placeholder: "100" },
+        { name: "hba1c", label: "HbA1c (%)", type: "number", placeholder: "7.0", step: "0.1" },
+        { name: "bmi", label: "BMI (kg/m²)", type: "number", placeholder: "22.5", step: "0.1" },
+        { name: "systolic_bp", label: "Systolic BP (mmHg)", type: "number", placeholder: "120" },
+        { name: "diastolic_bp", label: "Diastolic BP (mmHg)", type: "number", placeholder: "80" },
+        { name: "cholesterol", label: "Cholesterol (mg/dL)", type: "number", placeholder: "180" },
+        { name: "hdl", label: "HDL (mg/dL)", type: "number", placeholder: "45" },
+        { name: "ldl", label: "LDL (mg/dL)", type: "number", placeholder: "120" },
+        { name: "triglycerides", label: "Triglycerides (mg/dL)", type: "number", placeholder: "150" },
+        { name: "insulin_level", label: "Insulin Level (μU/mL)", type: "number", placeholder: "15", step: "0.1" },
+        { name: "heart_rate", label: "Heart Rate (bpm)", type: "number", placeholder: "72" },
+      ]
+    },
+    
     hypertension: {
       title: "Hypertension Analysis",
       fields: [
-        { name: "age", label: "Age", type: "number", placeholder: "50" },
-        { name: "systolicBP", label: "Systolic BP (mmHg)", type: "number", placeholder: "140" },
-        { name: "diastolicBP", label: "Diastolic BP (mmHg)", type: "number", placeholder: "90" },
-        { name: "bmi", label: "BMI", type: "number", placeholder: "27.0", step: "0.1" },
-        { name: "sodium", label: "Daily Sodium Intake (mg)", type: "number", placeholder: "2300" },
-        { name: "exerciseHours", label: "Exercise Hours/Week", type: "number", placeholder: "3" },
+        { name: "weight", label: "Weight (kg)", type: "number", placeholder: "75", step: "0.1" },
+        { name: "glucose", label: "Glucose (mg/dL)", type: "number", placeholder: "100" },
+        { name: "heart_rate", label: "Heart Rate (bpm)", type: "number", placeholder: "72" },
+        { name: "activity", label: "Activity Level", type: "select", options: ["Low", "Moderate", "High"] },
+        { name: "sleep", label: "Sleep Hours/Night", type: "number", placeholder: "7", step: "0.1" },
+        { name: "systolic_bp", label: "Systolic BP (mmHg)", type: "number", placeholder: "140" },
+        { name: "diastolic_bp", label: "Diastolic BP (mmHg)", type: "number", placeholder: "90" },
+        { name: "hba1c", label: "HbA1c (%)", type: "number", placeholder: "6.5", step: "0.1" },
+        { name: "lipids", label: "Total Lipids (mg/dL)", type: "number", placeholder: "200" },
+        { name: "creatinine", label: "Creatinine (mg/dL)", type: "number", placeholder: "1.0", step: "0.1" },
+        { name: "med_adherence", label: "Medication Adherence", type: "select", options: ["Poor", "Fair", "Good", "Excellent"] },
       ]
     },
     "heart-failure": {
@@ -110,12 +124,49 @@ const AnalysisForm = () => {
     "weight-glp1": {
       title: "Weight & GLP-1 Analysis",
       fields: [
-        { name: "age", label: "Age", type: "number", placeholder: "35" },
-        { name: "currentWeight", label: "Current Weight (kg)", type: "number", placeholder: "85" },
-        { name: "height", label: "Height (cm)", type: "number", placeholder: "170" },
-        { name: "startingWeight", label: "Weight Before GLP-1 (kg)", type: "number", placeholder: "95" },
-        { name: "glp1Duration", label: "Months on GLP-1", type: "number", placeholder: "6" },
-        { name: "glp1Type", label: "GLP-1 Medication", type: "select", options: ["Semaglutide", "Liraglutide", "Dulaglutide", "Other"] },
+        { name: "age", label: "Age", type: "number", placeholder: "45" },
+        { name: "sex", label: "Sex (0=Female,1=Male)", type: "number", placeholder: "1" },
+        { name: "BMI", label: "BMI (kg/m²)", type: "number", placeholder: "32.5", step: "0.1" },
+        { name: "waist_cm", label: "Waist (cm)", type: "number", placeholder: "100" },
+        { name: "obesity_class", label: "Obesity Class", type: "select", options: ["None", "Class I", "Class II", "Class III"] },
+        { name: "T2D_status", label: "Type 2 Diabetes", type: "select", options: ["No", "Yes"] },
+        { name: "HTN_status", label: "Hypertension", type: "select", options: ["No", "Yes"] },
+        { name: "OSA_status", label: "Sleep Apnea (OSA)", type: "select", options: ["No", "Yes"] },
+        { name: "hbA1c_baseline", label: "Baseline HbA1c (%)", type: "number", placeholder: "6.8", step: "0.1" },
+        { name: "hbA1c_delta", label: "HbA1c Change (%)", type: "number", placeholder: "-0.6", step: "0.1" },
+        { name: "fasting_glucose", label: "Fasting Glucose (mg/dL)", type: "number", placeholder: "110" },
+        { name: "ldl", label: "LDL (mg/dL)", type: "number", placeholder: "120" },
+        { name: "hdl", label: "HDL (mg/dL)", type: "number", placeholder: "45" },
+        { name: "triglycerides", label: "Triglycerides (mg/dL)", type: "number", placeholder: "180" },
+        { name: "alt", label: "ALT (U/L)", type: "number", placeholder: "28" },
+        { name: "egfr", label: "eGFR (mL/min/1.73m²)", type: "number", placeholder: "90" },
+        { name: "weight_4w_slope", label: "Weight 4-week Slope (kg/wk)", type: "number", placeholder: "-0.6", step: "0.1" },
+        { name: "sbp", label: "Systolic BP (mmHg)", type: "number", placeholder: "130" },
+        { name: "dbp", label: "Diastolic BP (mmHg)", type: "number", placeholder: "85" },
+        { name: "hr", label: "Heart Rate (bpm)", type: "number", placeholder: "72" },
+        { name: "spo2", label: "SpO₂ (%)", type: "number", placeholder: "98", step: "0.1" },
+        { name: "GLP1_agent", label: "GLP-1 Agent", type: "select", options: ["Semaglutide", "Liraglutide", "Dulaglutide", "Other"] },
+        { name: "dose_tier", label: "Dose Tier", type: "select", options: ["Low", "Medium", "High"] },
+        { name: "adherence_90d", label: "Adherence (90d, %)", type: "number", placeholder: "85", step: "1" },
+        { name: "missed_doses_last_30d", label: "Missed Doses (last 30d)", type: "number", placeholder: "1" },
+        { name: "nausea_score", label: "Nausea Score (0-10)", type: "number", placeholder: "2", step: "1" },
+        { name: "vomit_score", label: "Vomiting Score (0-10)", type: "number", placeholder: "1", step: "1" },
+        { name: "appetite_score", label: "Appetite Score (0-10)", type: "number", placeholder: "3", step: "1" },
+        { name: "steps_avg", label: "Daily Steps (avg)", type: "number", placeholder: "6000" },
+        { name: "active_minutes", label: "Active Minutes/Day", type: "number", placeholder: "40" },
+        { name: "exercise_days_wk", label: "Exercise Days/Week", type: "number", placeholder: "4" },
+        { name: "sleep_hours", label: "Sleep Hours/Night", type: "number", placeholder: "7.5", step: "0.1" },
+        { name: "alcohol_units_wk", label: "Alcohol Units/Week", type: "number", placeholder: "2" },
+        { name: "tobacco_cigs_per_day", label: "Cigarettes/Day", type: "number", placeholder: "0" },
+        { name: "tobacco_chew_use", label: "Tobacco Chew Use", type: "select", options: ["No", "Yes"] },
+        { name: "junk_food_freq_wk", label: "Junk Food Meals/Week", type: "number", placeholder: "2" },
+        { name: "insurance_denied", label: "Insurance Denied", type: "select", options: ["No", "Yes"] },
+        { name: "prior_auth_denial", label: "Prior Auth Denial", type: "select", options: ["No", "Yes"] },
+        { name: "fill_gap_days", label: "Rx Fill Gap (days)", type: "number", placeholder: "0" },
+        { name: "telehealth_visits", label: "Telehealth Visits (90d)", type: "number", placeholder: "1" },
+        { name: "nurse_messages", label: "Nurse Messages (90d)", type: "number", placeholder: "2" },
+        { name: "cancellations", label: "Appointment Cancellations (90d)", type: "number", placeholder: "0" },
+        { name: "ER_visits_obesity_related", label: "ER Visits (obesity-related)", type: "number", placeholder: "0" }
       ]
     }
   };
@@ -148,6 +199,7 @@ const AnalysisForm = () => {
       // Fill the form with random data
       const form = document.querySelector('form') as HTMLFormElement;
       if (form) {
+        console.log('Filling form with random data for', diseaseType, ':', result.data);
         Object.entries(result.data).forEach(([key, value]) => {
           const input = form.querySelector(`[name="${key}"]`) as HTMLInputElement | HTMLSelectElement;
           if (input) {
@@ -159,13 +211,21 @@ const AnalysisForm = () => {
                 select.value = String(value);
                 // Trigger change event for React
                 select.dispatchEvent(new Event('change', { bubbles: true }));
+                select.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log(`Set select ${key} to ${value}`);
+              } else {
+                console.warn(`No option found for ${key} with value ${value}`);
               }
             } else {
               // For input elements
-              input.value = String(value);
+              (input as HTMLInputElement).value = String(value);
               // Trigger change event for React
               input.dispatchEvent(new Event('change', { bubbles: true }));
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              console.log(`Set input ${key} to ${value}`);
             }
+          } else {
+            console.warn(`No input found for field ${key}`);
           }
         });
       }
@@ -344,24 +404,24 @@ const AnalysisForm = () => {
                 Generate Random Data
               </Button>
               
-              <Button
-                type="submit"
-                size="lg"
-                disabled={isLoading}
-                className="medical-gradient text-white hover:shadow-glow transition-all duration-300 px-12 py-6 text-lg"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    Analyze Now
-                    <ArrowRight className="h-5 w-5 ml-2" />
-                  </>
-                )}
-              </Button>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isLoading}
+              className="medical-gradient text-white hover:shadow-glow transition-all duration-300 px-12 py-6 text-lg"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  Analyze Now
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </>
+              )}
+            </Button>
             </div>
             
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
