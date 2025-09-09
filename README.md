@@ -74,7 +74,7 @@ _Platform features and capabilities showcase_
 _Key focus areas and specializations_
 
 ### Analysis Interface
-
+![Analysis1](frontend/public/er.jpg)
 ![Analysis](frontend/public/an.jpg)
 _Data analysis interface with deterioration probability_
 
