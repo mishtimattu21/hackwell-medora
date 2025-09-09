@@ -65,15 +65,28 @@ To revolutionize healthcare delivery by providing accurate, evidence-based risk 
 
 ### Landing Page
 
-_[Placeholder for frontend landing page screenshot showing the main interface with disease selection cards and navigation]_
+![Landing Page](frontend/public/hero.jpg)
+_Main interface with disease selection cards and navigation_
 
-### Analysis Form
+### Features Overview
 
-_[Placeholder for frontend analysis form screenshot showing the data input interface with health parameters and file upload]_
+![Features](frontend/public/features.jpg)
+_Platform features and capabilities showcase_
+
+### Focus Areas
+
+![Focus](frontend/public/focus.jpg)
+_Key focus areas and specializations_
+
+### Analysis Interface
+
+![Analysis](frontend/public/an.jpg)
+_Data input interface with health parameters and file upload_
 
 ### Results Dashboard
 
-_[Placeholder for frontend results dashboard screenshot showing risk assessment results, charts, and recommendations]_
+![Results](frontend/public/rep.jpg)
+_Risk assessment results, charts, and recommendations_
 
 ---
 
