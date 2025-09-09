@@ -7,14 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
 import { 
-  Upload, 
-  FileText, 
-  BarChart3, 
-  Shield, 
-  Users, 
-  TrendingUp,
-  Heart,
-  Activity,
   Star,
   ArrowRight
 } from "lucide-react";
@@ -34,7 +26,7 @@ const Landing = () => {
       >
         <div className="absolute inset-0 bg-background/70" />
         
-        <div className="relative z-10 container mx-auto px-4">
+        <div className="relative z-10 container mx-auto px-4 md:translate-x-2 lg:translate-x-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: Copy */}
             <div className="space-y-8 text-left slide-up">
@@ -75,7 +67,7 @@ const Landing = () => {
             <div className="relative slide-in flex justify-end pr-9 md:pr-8 lg:pr-12">
               <div className="relative w-full max-w-xl lg:max-w-2xl ml-auto">
                 <div className="aspect-[4/3] flex items-center justify-center">
-                  <img src="/hero-1.png" alt="Medical hero" className="w-full h-full object-contain" />
+                  <img src="/hero-2.png" alt="Medical hero" className="w-full h-full object-contain" />
                 </div>
               </div>
             </div>
@@ -93,20 +85,20 @@ const Landing = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
             {[
               {
-                icon: Upload,
+                image: "/report.png",
                 title: "Upload Report",
-                description: "Upload your medical reports, lab results, or input key health parameters"
+                description: "Upload your medical reports, lab results, or key health parameters"
               },
               {
-                icon: FileText,
+                image: "/parameters.png",
                 title: "Fill Parameters",
                 description: "Complete any missing health information for accurate analysis"
               },
               {
-                icon: BarChart3,
+                image: "/predictions.png",
                 title: "Get Predictions",
                 description: "Receive detailed risk analysis with actionable recommendations"
               }
@@ -115,9 +107,7 @@ const Landing = () => {
                 <Card className="relative overflow-hidden shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted h-full">
                   <CardContent className="p-8 text-center h-full flex flex-col">
                     <div className="relative mb-6">
-                      <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
-                        <item.icon className="h-8 w-8 text-primary" />
-                      </div>
+                      <img src={item.image} alt={item.title} className="h-12 w-auto md:h-14 object-contain mx-auto" />
                     </div>
                     <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
                     <p className="text-muted-foreground leading-relaxed flex-1">{item.description}</p>
@@ -125,6 +115,9 @@ const Landing = () => {
                 </Card>
               </Reveal>
             ))}
+            {/* Arrows between steps for md+ screens */}
+            <img src="/arrow1.png" alt="to step 2" className="hidden md:block absolute top-1/2 -translate-y-1/2 left-1/3 -ml-6 h-8 w-auto" />
+            <img src="/arrow2.png" alt="to step 3" className="hidden md:block absolute top-1/2 -translate-y-1/2 left-2/3 -ml-6 h-8 w-auto" />
           </div>
         </div>
       </section>
@@ -142,41 +135,41 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
             {[
               {
-                icon: Heart,
+                image: "/multi_disease.png",
                 title: "Multi-disease Prediction",
                 description: "Advanced models for diabetes, hypertension, heart failure, and more"
               },
               {
-                icon: BarChart3,
+                image: "/risk_scoring.png",
                 title: "Risk Scoring & Probabilities",
                 description: "Clear probability scores with confidence intervals"
               },
               {
-                icon: Users,
+                image: "/clinic_friendly.png",
                 title: "Clinician-friendly Insights", 
                 description: "Professional reports formatted for healthcare providers"
               },
               {
-                icon: FileText,
-                title: "Patient Recommendations",
+                image: "/patient_recommend.png",
+                title: "Patient Recommend",
                 description: "Personalized lifestyle and treatment suggestions"
               },
               {
-                icon: TrendingUp,
+                image: "/dashboardd.png",
                 title: "Dashboard with Charts",
                 description: "Interactive visualizations of health trends and risks"
               },
               {
-                icon: Shield,
+                image: "/password.png",
                 title: "Secure & Private",
                 description: "HIPAA-compliant data handling and encryption"
               }
             ].map((feature, index) => (
               <Reveal key={index} delayMs={index * 100}>
-                <Card className="shadow-soft hover:shadow-glow transition-all duration-300 border-0 frosted group h-full">
+                <Card className="shadow-soft hover:shadow-glow transition-all duration-300 border frosted group h-full border-transparent hover:border-primary hover:scale-[1.02]">
                   <CardContent className="p-6 h-full flex flex-col">
-                  <div className="bg-primary/10 rounded-lg w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <feature.icon className="h-6 w-6 text-primary" />
+                  <div className="mb-4">
+                    <img src={feature.image} alt={feature.title} className="h-12 w-auto md:h-14 object-contain" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed flex-1">{feature.description}</p>
@@ -203,7 +196,7 @@ const Landing = () => {
               {
                 name: "Dr. Sarah Johnson",
                 role: "Cardiologist",
-                content: "Medpredict has transformed how I assess patient risk. The accuracy and clarity of reports save significant time in consultations.",
+                content: "Medora has transformed how I assess patient risk. The accuracy and clarity of reports save significant time in consultations.",
                 rating: 5
               },
               {

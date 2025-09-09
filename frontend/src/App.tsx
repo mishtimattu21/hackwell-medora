@@ -15,7 +15,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="Medpredict-theme">
+    <ThemeProvider defaultTheme="light" storageKey="Medora-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />
