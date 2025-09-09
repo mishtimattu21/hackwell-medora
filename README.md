@@ -1,4 +1,4 @@
-#<img src="logo_butterfly.png" alt="Medora Logo" width="40" height="40">  #Medora 
+# <img src="logo_butterfly.png" alt="Medora Logo" width="40" height="40"> Medora
 
 ## AI-Powered Health Risk Prediction Platform
 
@@ -332,7 +332,7 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 6. **Risk Progression Analysis**: Historical trends and future projections
 7. **Disclaimers**: Professional medical disclaimers and limitations
 
-### Sample Report Pagesa
+### Sample Report Pages
 
 _[Placeholder for sample PDF report page 1 showing executive summary and risk metrics]_
 
