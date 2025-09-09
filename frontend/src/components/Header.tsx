@@ -24,7 +24,7 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
             <Activity className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">
-              MedPredict
+              Medpredict
             </span>
           </Link>
 

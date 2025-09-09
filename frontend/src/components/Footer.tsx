@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <Activity className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-foreground">MedPredict</span>
+              <span className="text-xl font-bold text-foreground">Medpredict</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
               AI-powered health risk prediction platform providing accurate chronic disease analysis 
@@ -54,7 +54,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-2 text-muted-foreground text-sm">
                 <Mail className="h-4 w-4" />
-                <span>info@medpredict.com</span>
+                <span>info@Medpredict.com</span>
               </div>
               <div className="flex items-center space-x-2 text-muted-foreground text-sm">
                 <Phone className="h-4 w-4" />
@@ -71,7 +71,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © 2024 MedPredict. All rights reserved.
+            © 2024 Medpredict. All rights reserved.
           </p>
           
           {/* Social Links */}
