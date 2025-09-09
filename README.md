@@ -1,16 +1,7 @@
 # <img src="frontend/public/logo_butterfly.png" alt="Medora Logo" width="40" height="40"> Medora
 
 ## AI-Powered Health Risk Prediction Platform
-
 _Transforming healthcare through intelligent risk assessment and predictive analytics_
-
-<div align="center">
-  <img src="frontend/public/logo_butterfly.png" alt="Medora Logo" width="120" height="120">
-</div>
-
----
-
----
 
 ## Overview
 
