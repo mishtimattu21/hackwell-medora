@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, FileText, Loader2, ArrowRight } from "lucide-react";
+import { Upload, FileText, Loader2, ArrowRight, Shuffle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const AnalysisForm = () => {
@@ -104,8 +104,7 @@ const AnalysisForm = () => {
         { name: "admissions_30d", label: "Admissions Last 30 Days", type: "number", placeholder: "0" },
         { name: "physical_activity_level", label: "Physical Activity Level", type: "select", options: ["Low", "Medium", "High"] },
         { name: "physical_activity_numeric", label: "Physical Activity (0/1/2)", type: "number", placeholder: "1" },
-        { name: "cci", label: "Charlson Comorbidity Index", type: "number", placeholder: "3" },
-        { name: "pred_prob_90d", label: "Predicted Prob (90d)", type: "number", placeholder: "0.25", step: "0.01" }
+        { name: "cci", label: "Charlson Comorbidity Index", type: "number", placeholder: "3" }
       ]
     },
     "weight-glp1": {
@@ -131,6 +130,58 @@ const AnalysisForm = () => {
         title: "File uploaded successfully",
         description: `${file.name} has been uploaded.`,
       });
+    }
+  };
+
+  const handleRandomData = async () => {
+    setIsLoading(true);
+    try {
+      const RAW_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8000";
+      const API_BASE = String(RAW_BASE).replace(/\/*$/, "");
+      const res = await fetch(`${API_BASE}/random-data/${diseaseType}`, { method: "GET" });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to generate random data");
+      }
+      const result = await res.json();
+      
+      // Fill the form with random data
+      const form = document.querySelector('form') as HTMLFormElement;
+      if (form) {
+        Object.entries(result.data).forEach(([key, value]) => {
+          const input = form.querySelector(`[name="${key}"]`) as HTMLInputElement | HTMLSelectElement;
+          if (input) {
+            if (input.tagName === 'SELECT') {
+              // For select elements, find the option with matching value
+              const select = input as HTMLSelectElement;
+              const option = Array.from(select.options).find(opt => opt.value === String(value));
+              if (option) {
+                select.value = String(value);
+                // Trigger change event for React
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            } else {
+              // For input elements
+              input.value = String(value);
+              // Trigger change event for React
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+        });
+      }
+      
+      toast({
+        title: "Random data generated",
+        description: `Random ${diseaseType} data has been filled in the form.`,
+      });
+    } catch (err: any) {
+      toast({ 
+        title: "Random data generation failed", 
+        description: String(err?.message || err), 
+        variant: "destructive" 
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -278,26 +329,45 @@ const AnalysisForm = () => {
             </CardContent>
           </Card>
 
-          {/* Submit Button */}
-          <div className="text-center">
-            <Button
-              type="submit"
-              size="lg"
-              disabled={isLoading}
-              className="medical-gradient text-white hover:shadow-glow transition-all duration-300 px-12 py-6 text-lg"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  Analyze Now
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </>
-              )}
-            </Button>
+          {/* Action Buttons */}
+          <div className="text-center space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={handleRandomData}
+                disabled={isLoading}
+                className="px-8 py-6 text-lg border-primary/20 hover:bg-primary/5"
+              >
+                <Shuffle className="h-5 w-5 mr-2" />
+                Generate Random Data
+              </Button>
+              
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isLoading}
+                className="medical-gradient text-white hover:shadow-glow transition-all duration-300 px-12 py-6 text-lg"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    Analyze Now
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
+            
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Use "Generate Random Data" to quickly test the analysis with realistic sample data, 
+              or fill in your own health parameters for a personalized assessment.
+            </p>
           </div>
         </form>
       </div>
