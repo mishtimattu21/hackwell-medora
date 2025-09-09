@@ -111,7 +111,7 @@ _[Placeholder for frontend results dashboard screenshot showing risk assessment 
 **Key Parameters**: Age, BMI, blood pressure, cholesterol, lifestyle factors
 **Use Case**: Primary care screening and general health monitoring
 
-### 2. Diabetes Model (Type 2)
+### 2. Diabetes Model
 
 **Purpose**: Diabetes risk analysis and complication prediction
 **Key Parameters**: HbA1c, fasting glucose, insulin levels, cardiovascular markers
