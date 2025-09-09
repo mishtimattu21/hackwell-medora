@@ -182,7 +182,7 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="feedback" className="py-20 bg-muted/30">
+      {/* <section id="feedback" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">What Our Users <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">Say</span></h2>
@@ -233,7 +233,7 @@ const Landing = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
       <section id="contact" className="py-20">
