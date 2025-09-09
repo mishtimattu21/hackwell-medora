@@ -343,17 +343,14 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ### Main Workflow
 
 ![Workflow](frontend/public/flow.png)
-_Main worflow of the Platform_
 
 ### Report Sample
 
-![Sample Report](frontend/public/sample.jpg)
-_Report_
+![Sample Report](frontend/public/sample.png)
 
 ### Dependencies
 
-![Focus](frontend/public/dependencies.jpg)
-_Frontend and Backend Dependencies_
+![Focus](frontend/public/dependencies.png)
 
 ---
 
