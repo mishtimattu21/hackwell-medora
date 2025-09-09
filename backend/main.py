@@ -164,15 +164,21 @@ def load_models(models_dir: Path) -> Dict[int, Any]:
 
 
 app = FastAPI(title="Disease Probability API", version="1.0.0")
+app = FastAPI()
 
-# Allow all origins by default; tighten if needed
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:8080",
+        "https://hackwell-medora-irnn.vercel.app",  # your frontend
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Allow all origins by default; tighten if needed
+
 
 
 BASE_DIR = Path(__file__).resolve().parent
