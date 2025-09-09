@@ -4,14 +4,6 @@
 
 _Transforming healthcare through intelligent risk assessment and predictive analytics_
 
-<div align="center">
-  <img src="frontend/public/logo_butterfly.png" alt="Medora Logo" width="120" height="120">
-</div>
-
----
-
----
-
 ## Overview
 
 Medora is a comprehensive AI-powered health risk prediction platform designed to assist healthcare providers in identifying patients at risk of health deterioration within 90 days. The platform combines advanced machine learning models with clinical expertise to provide actionable insights for preventive care and early intervention.
