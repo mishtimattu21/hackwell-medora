@@ -6,7 +6,6 @@ import pickle
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
 import numpy as np
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
@@ -168,14 +167,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "https://hackwell-medora-irnn.vercel.app",  # your frontend
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # allow all for testing
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
+
 
 # Allow all origins by default; tighten if needed
 
