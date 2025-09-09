@@ -166,7 +166,7 @@ app = FastAPI(title="Disease Probability API", version="1.0.0")
 app = FastAPI()
 
 # Get CORS origins from environment variable
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 cors_origins = [origin.strip() for origin in cors_origins if origin.strip()]
 
 app.add_middleware(
