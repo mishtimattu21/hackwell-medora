@@ -1,8 +1,12 @@
-# <img src="logo_butterfly.png" alt="Medora Logo" width="40" height="40"> Medora
+# <img src="frontend/public/logo_butterfly.png" alt="Medora Logo" width="40" height="40"> Medora
 
 ## AI-Powered Health Risk Prediction Platform
 
 _Transforming healthcare through intelligent risk assessment and predictive analytics_
+
+<div align="center">
+  <img src="frontend/public/logo_butterfly.png" alt="Medora Logo" width="120" height="120">
+</div>
 
 ---
 
@@ -81,12 +85,12 @@ _Key focus areas and specializations_
 ### Analysis Interface
 
 ![Analysis](frontend/public/an.jpg)
-_Data input interface with health parameters and file upload_
+_Data analysis interface with deterioration probability_
 
 ### Results Dashboard
 
 ![Results](frontend/public/rep.jpg)
-_Risk assessment results, charts, and recommendations_
+_Report in PDF Format for download_
 
 ---
 
