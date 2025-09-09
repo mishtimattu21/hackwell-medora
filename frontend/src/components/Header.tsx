@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
@@ -24,6 +25,7 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
             <img src="/logo_butterfly.png" alt="MedPredict Logo" className="h-10 w-auto md:h-12" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">
+              Medora
               Medora
             </span>
           </Link>

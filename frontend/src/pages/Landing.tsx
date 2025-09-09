@@ -196,7 +196,7 @@ const Landing = () => {
               {
                 name: "Dr. Sarah Johnson",
                 role: "Cardiologist",
-                content: "MedPredict has transformed how I assess patient risk. The accuracy and clarity of reports save significant time in consultations.",
+                content: "Medora has transformed how I assess patient risk. The accuracy and clarity of reports save significant time in consultations.",
                 rating: 5
               },
               {
