@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   Star,
   ArrowRight,
@@ -20,6 +21,19 @@ const Landing = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [messageLength, setMessageLength] = useState(0);
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Pause video when dialog closes
+  useEffect(() => {
+    if (!isDemoOpen && videoRef.current) {
+      try {
+        videoRef.current.pause();
+      } catch (_) {}
+    }
+  }, [isDemoOpen]);
+
+  
 
   const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -134,13 +148,34 @@ const Landing = () => {
                   </Link>
                 </Button>
                 
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  className="text-lg px-8 py-6 hover:bg-primary/5 border-primary/20"
-                >
-                  Watch Demo
-                </Button>
+                <Dialog open={isDemoOpen} onOpenChange={setIsDemoOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="text-lg px-8 py-6 hover:bg-primary/5 border-primary/20"
+                    >
+                      Watch Demo
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-full max-w-4xl p-0 overflow-hidden border-primary/20">
+                    <DialogHeader className="px-4 pt-4">
+                      <DialogTitle className="text-xl">Platform Demo</DialogTitle>
+                    </DialogHeader>
+                    <div className="relative px-4 pb-4">
+                      <div className="relative w-full rounded-md overflow-hidden border border-border bg-background">
+                        <div className="aspect-video w-full">
+                        <video
+                          ref={videoRef}
+                          src="https://auzwwcdtxdafwimpxvil.supabase.co/storage/v1/object/public/demo/demo.mp4"
+                          controls
+                          className="h-full w-full object-contain bg-black"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
