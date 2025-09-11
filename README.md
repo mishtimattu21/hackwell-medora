@@ -342,7 +342,7 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 ### Main Workflow
 
-![Workflow](frontend/public/overall_work.png)
+![Workflow](frontend/public/overall_work.jpg)
 
 ### Report Sample
 
